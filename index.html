@@ -1,13 +1,10 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>King Ventura Cliente</title>
-
 <style>
-
 :root{
   --bg:#05080f;
   --card:#0b1526;
@@ -187,13 +184,10 @@ button{
 }
 
 @media(max-width:700px){
-
 .logo h1{
   font-size:26px;
 }
-
 }
-
 </style>
 </head>
 
@@ -202,7 +196,6 @@ button{
 <div class="container">
 
 <div class="logo" style="text-align:center;">
-
 <h1 style="
 color:#f4c542;
 font-size:36px;
@@ -264,7 +257,7 @@ Monte seu pedido online
 <input id="telefone">
 
 <label>CEP</label>
-<input id="cep" maxlength="8" placeholder="Digite seu CEP">
+<input id="cep" maxlength="9" placeholder="Digite seu CEP">
 
 <label>Rua</label>
 <input id="rua" placeholder="Rua">
@@ -285,15 +278,13 @@ Monte seu pedido online
 <h2>🍕 Escolha sua Pizza</h2>
 
 <div class="grid grid-2">
-
 <div>
 <label>Tamanho</label>
 <select id="tamanho">
-<option value="35">Grande 35cm</option>
-<option value="25">Brotinho 25cm</option>
+<option value="grande">Grande 35cm</option>
+<option value="brotinho">Brotinho 25cm</option>
 </select>
 </div>
-
 <div>
 <label>Tipo</label>
 <select id="tipo">
@@ -301,35 +292,28 @@ Monte seu pedido online
 <option value="meio">Meio a Meio</option>
 </select>
 </div>
-
 </div>
 
 <br>
 
 <div class="sabores-grid">
-
 <div class="sabor-card">
 <div class="sabor-nome">Calabresa</div>
 <div class="sabor-preco">R$ 35,00</div>
 </div>
-
 <div class="sabor-card">
 <div class="sabor-nome">Muçarela</div>
 <div class="sabor-preco">R$ 35,00</div>
 </div>
-
 <div class="sabor-card">
 <div class="sabor-nome">Bacon</div>
 <div class="sabor-preco">R$ 40,00</div>
 </div>
-
 <div class="sabor-card">
 <div class="sabor-nome">Frango com Catupiry</div>
 <div class="sabor-preco">R$ 40,00</div>
 </div>
-
 </div>
-
 </div>
 
 <div class="card">
@@ -361,11 +345,9 @@ Monte seu pedido online
 <h2>🛒 Carrinho</h2>
 
 <div id="carrinho">
-
 <div class="item-carrinho">
 Nenhum item adicionado.
 </div>
-
 </div>
 
 <div class="total">
@@ -375,49 +357,167 @@ R$ 0,00
 </div>
 
 <div class="rodape">
-
 <button class="btn">
 📦 Finalizar Pedido
 </button>
-
 </div>
 
 </div>
 
 <script>
-document.getElementById('cep').addEventListener('blur', function () {
-  const cep = this.value.replace(/\D/g, '');
-  if (cep.length === 8) {
-    fetch(`https://viacep.com.br/ws/${cep}/json/`)
-      .then(response => response.json())
-      .then(data => {
-        if (!data.erro) {
-          document.getElementById('rua').value = data.logradouro || '';
-          document.getElementById('bairro').value = data.bairro || '';
-        } else {
-          alert('CEP não encontrado.');
-          document.getElementById('rua').value = '';
-          document.getElementById('bairro').value = '';
+// Bairros com entrega grátis até 3km
+const bairrosGratisAté3Km = [
+  "jardim tarumã",
+  "copavilã",
+  "pendigo",
+  "nova laguna",
+  "laranjeiras"
+];
+
+// Função limpa texto para comparar bairros
+function textoLimpo(texto) {
+  return texto.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
+
+// Função calcula a taxa de entrega com base na distância em km
+function calcularTaxaEntrega(distanciaKm, bairro) {
+  const bairroLimpo = textoLimpo(bairro);
+
+  if (bairrosGratisAté3Km.includes(bairroLimpo) && distanciaKm <= 3) {
+    return 0;
+  }
+
+  if (distanciaKm <= 3) {
+    return 0;
+  }
+
+  // taxa base 5 reais acima de 3km
+  let taxa = 5;
+
+  // adiciona 1.5 reais por km extra após 3km
+  const kmExtra = Math.max(0, distanciaKm - 3);
+  taxa += kmExtra * 1.5;
+
+  // arredonda para duas casas
+  return Math.min(taxa, 20).toFixed(2);
+}
+
+// Função para simular cálculo de distância (pode ser substituída por cálculo real com API)
+function calcularDistanciaSimulada(cep, bairro) {
+  // Apenas simulação: bairros grátis até 3 km, outros 5km
+  const bairroLimpo = textoLimpo(bairro);
+  if (bairrosGratisAté3Km.includes(bairroLimpo)) return 2.5;
+  return 5;
+}
+
+// Atualiza a taxa de entrega na tela
+function atualizarTaxaEntrega() {
+  const cep = document.getElementById("cep").value;
+  const bairro = document.getElementById("bairro").value;
+
+  if (!cep || !bairro) {
+    mostrarMensagemTaxa("Informe o CEP e o Bairro.");
+    return;
+  }
+
+  // Aqui você pode usar API para calcular distância real. Usamos simulação
+  const distanciaKm = calcularDistanciaSimulada(cep, bairro);
+  const taxa = calcularTaxaEntrega(distanciaKm, bairro);
+
+  const totalEl = document.querySelector(".total");
+  const taxaEl = document.querySelector("#taxaEntregaText");
+
+  if (taxaEl) {
+    taxaEl.innerText = (taxa == 0) ? "Entrega grátis" : `Taxa de entrega: R$ ${taxa}`;
+  } else {
+    const divTaxa = document.createElement("div");
+    divTaxa.id = "taxaEntregaText";
+    divTaxa.style.color = "var(--azul)";
+    divTaxa.style.marginTop = "8px";
+    divTaxa.innerText = (taxa == 0) ? "Entrega grátis" : `Taxa de entrega: R$ ${taxa}`;
+    totalEl.parentNode.insertBefore(divTaxa, totalEl.nextSibling);
+  }
+}
+
+function mostrarMensagemTaxa(msg) {
+  const taxaEl = document.querySelector("#taxaEntregaText");
+  if (taxaEl) taxaEl.innerText = msg;
+}
+
+// Função para buscar via API de CEP via ViaCEP
+async function buscarPorCep() {
+  const cepInput = document.getElementById("cep");
+  let cep = cepInput.value.replace(/\D/g, '');
+
+  if (cep.length !== 8) return;
+
+  try {
+    const resposta = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+    const dados = await resposta.json();
+    if (dados.erro) {
+      mostrarMensagemTaxa("CEP não encontrado.");
+      return;
+    }
+    document.getElementById("rua").value = dados.logradouro || "";
+    document.getElementById("bairro").value = dados.bairro || "";
+    atualizarTaxaEntrega();
+  } catch {
+    mostrarMensagemTaxa("Erro ao buscar CEP.");
+  }
+}
+
+// Função para buscar CEP conforme digita a rua (com delay)
+let timerBuscaRua = null;
+async function buscarCepPelaRua() {
+  clearTimeout(timerBuscaRua);
+  timerBuscaRua = setTimeout(async () => {
+    const ruaInput = document.getElementById("rua");
+    const bairroInput = document.getElementById("bairro");
+    const rua = ruaInput.value.trim();
+    const bairro = bairroInput.value.trim();
+
+    if (rua.length < 3) return;
+
+    try {
+      // Buscando via API para Campo Grande (estado MS)
+      const url = `https://viacep.com.br/ws/ms/campo%20grande/${encodeURIComponent(rua)}/json/`;
+      const resposta = await fetch(url);
+      const lista = await resposta.json();
+      if (Array.isArray(lista) && lista.length > 0) {
+        // Se tiver bairro digitado, tenta achar um que bata
+        let escolhido = lista[0];
+        if (bairro) {
+          const bairroLower = bairro.toLowerCase();
+          const achado = lista.find(e => e.bairro && e.bairro.toLowerCase() === bairroLower);
+          if (achado) escolhido = achado;
         }
-      });
+        if (escolhido) {
+          document.getElementById("cep").value = escolhido.cep || "";
+          document.getElementById("bairro").value = escolhido.bairro || bairro;
+          atualizarTaxaEntrega();
+        }
+      } else {
+        mostrarMensagemTaxa("Rua não encontrada para buscar CEP.");
+      }
+    } catch {
+      mostrarMensagemTaxa("Erro na busca de CEP pela rua.");
+    }
+  }, 600);
+}
+
+document.getElementById("cep").addEventListener("input", () => {
+  if (document.getElementById("cep").value.replace(/\D/g, '').length === 8) {
+    buscarPorCep();
   }
 });
 
-document.getElementById('rua').addEventListener('blur', function () {
-  const rua = this.value;
-  const bairro = document.getElementById('bairro').value;
-  
-  if (rua.length > 3 && bairro.length > 0) {
-    // Ajuste região para Campo Grande - MS
-    fetch(`https://viacep.com.br/ws/ms/campo%20grande/${encodeURIComponent(rua)}/json/`)
-      .then(response => response.json())
-      .then(data => {
-        if (data && data.length > 0) {
-          document.getElementById('cep').value = data[0].cep.replace('-', '');
-        }
-      });
-  }
-});
+document.getElementById("rua").addEventListener("input", buscarCepPelaRua);
+document.getElementById("bairro").addEventListener("input", atualizarTaxaEntrega);
+document.getElementById("numero").addEventListener("input", atualizarTaxaEntrega);
+
+// Atualiza preço/pedido no início
+atualizarTaxaEntrega();
+
 </script>
 
 </body>
