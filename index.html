@@ -263,8 +263,17 @@ Monte seu pedido online
 <label>Telefone</label>
 <input id="telefone">
 
-<label>Endereço</label>
-<input id="endereco">
+<label>CEP</label>
+<input id="cep" maxlength="8" placeholder="Digite seu CEP">
+
+<label>Rua</label>
+<input id="rua" placeholder="Rua">
+
+<label>Número</label>
+<input id="numero" placeholder="Número">
+
+<label>Bairro</label>
+<input id="bairro" placeholder="Bairro">
 
 <label>Observação</label>
 <textarea id="observacao"></textarea>
@@ -374,6 +383,42 @@ R$ 0,00
 </div>
 
 </div>
+
+<script>
+document.getElementById('cep').addEventListener('blur', function () {
+  const cep = this.value.replace(/\D/g, '');
+  if (cep.length === 8) {
+    fetch(`https://viacep.com.br/ws/${cep}/json/`)
+      .then(response => response.json())
+      .then(data => {
+        if (!data.erro) {
+          document.getElementById('rua').value = data.logradouro || '';
+          document.getElementById('bairro').value = data.bairro || '';
+        } else {
+          alert('CEP não encontrado.');
+          document.getElementById('rua').value = '';
+          document.getElementById('bairro').value = '';
+        }
+      });
+  }
+});
+
+document.getElementById('rua').addEventListener('blur', function () {
+  const rua = this.value;
+  const bairro = document.getElementById('bairro').value;
+  
+  if (rua.length > 3 && bairro.length > 0) {
+    // Ajuste região para Campo Grande - MS
+    fetch(`https://viacep.com.br/ws/ms/campo%20grande/${encodeURIComponent(rua)}/json/`)
+      .then(response => response.json())
+      .then(data => {
+        if (data && data.length > 0) {
+          document.getElementById('cep').value = data[0].cep.replace('-', '');
+        }
+      });
+  }
+});
+</script>
 
 </body>
 </html>
