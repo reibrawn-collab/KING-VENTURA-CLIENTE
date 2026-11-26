@@ -14,40 +14,30 @@
   --texto:#ffffff;
   --muted:#9fb4d6;
 }
-
 *{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:Arial,sans-serif;
+  margin:0; padding:0; box-sizing:border-box; font-family:Arial,sans-serif;
 }
-
 body{
   background:var(--bg);
   color:var(--texto);
   padding:15px;
 }
-
 .container{
   max-width:900px;
   margin:auto;
 }
-
 .logo{
   text-align:center;
   margin-bottom:20px;
 }
-
 .logo h1{
   color:var(--azul);
   font-size:36px;
 }
-
 .logo p{
   color:var(--muted);
   font-size:18px;
 }
-
 .card{
   background:var(--card);
   border:1px solid var(--border);
@@ -55,12 +45,10 @@ body{
   padding:15px;
   margin-bottom:15px;
 }
-
 .card h2{
   color:var(--azul);
   margin-bottom:15px;
 }
-
 input,
 select,
 textarea{
@@ -72,28 +60,23 @@ textarea{
   padding:12px;
   margin-top:8px;
 }
-
 label{
   display:block;
   margin-top:10px;
   color:var(--muted);
   cursor:pointer;
 }
-
 .grid{
   display:grid;
   gap:12px;
 }
-
 .grid-2{
   grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
 }
-
 button{
   cursor:pointer;
   border:none;
 }
-
 .btn{
   background:var(--azul);
   color:white;
@@ -102,17 +85,14 @@ button{
   width:100%;
   font-weight:bold;
 }
-
 .btn:hover{
   opacity:.9;
 }
-
 .sabores-grid{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
   gap:12px;
 }
-
 .sabor-card{
   background:var(--card2);
   border:2px solid transparent;
@@ -121,26 +101,21 @@ button{
   cursor:pointer;
   transition:.2s;
 }
-
 .sabor-card:hover{
   border-color:var(--azul);
 }
-
 .sabor-card.selected{
   border-color:var(--azul);
   box-shadow:0 0 10px rgba(74,144,226,.4);
 }
-
 .sabor-nome{
   font-size:18px;
   font-weight:bold;
 }
-
 .sabor-preco{
   color:var(--azul);
   margin-top:8px;
 }
-
 .extra-list {
   max-height: 140px;
   overflow-y: auto;
@@ -151,31 +126,26 @@ button{
   margin-top: 8px;
   display: none;
 }
-
 .extra-item {
   display: flex;
   align-items: center;
   gap: 10px;
   margin-bottom: 6px;
 }
-
 .extra-item input[type="checkbox"] {
   width: 18px;
   height: 18px;
   cursor: pointer;
 }
-
 #carrinho{
   margin-top:10px;
 }
-
 .item-carrinho{
   background:var(--card2);
   padding:10px;
   border-radius:10px;
   margin-bottom:8px;
 }
-
 .total{
   font-size:24px;
   font-weight:bold;
@@ -183,13 +153,11 @@ button{
   text-align:right;
   margin-top:10px;
 }
-
 .entrega-taxa {
   color: var(--azul);
   margin-top: 8px;
   font-weight: 600;
 }
-
 .rodape{
   position:sticky;
   bottom:0;
@@ -199,7 +167,6 @@ button{
   border:1px solid var(--border);
   margin-top:20px;
 }
-
 .adicionais-btn-row {
   display: flex;
   justify-content: space-between;
@@ -210,7 +177,6 @@ button{
   color: var(--azul);
   font-weight: 600;
 }
-
 .adicionais-count {
   background: var(--azul);
   border-radius: 20px;
@@ -218,7 +184,6 @@ button{
   color: white;
   font-size: 0.85rem;
 }
-
 @media(max-width:700px){
 .logo h1{
   font-size:26px;
@@ -226,20 +191,15 @@ button{
 }
 </style>
 </head>
-
 <body>
-
 <div class="container">
-
 <div class="logo" style="text-align:center;">
 <h1>👑 KING VENTURA</h1>
-
 <div style="display:flex; justify-content:center; align-items:center; gap:6px; margin:10px auto;">
 <div style="width:50px; height:6px; background:#009246; border-radius:10px;"></div>
 <div style="width:50px; height:6px; background:#ffffff; border-radius:10px;"></div>
 <div style="width:50px; height:6px; background:#ce2b37; border-radius:10px;"></div>
 </div>
-
 <p>Monte seu pedido online</p>
 </div>
 
@@ -247,22 +207,16 @@ button{
 <h2>👤 Dados do Cliente</h2>
 <label>Nome</label>
 <input id="nome">
-
 <label>Telefone</label>
 <input id="telefone">
-
 <label>CEP</label>
 <input id="cep" maxlength="9" placeholder="Digite seu CEP">
-
 <label>Rua</label>
 <input id="rua" placeholder="Rua">
-
 <label>Número</label>
 <input id="numero" placeholder="Número">
-
 <label>Bairro</label>
 <input id="bairro" placeholder="Bairro">
-
 <label>Observação</label>
 <textarea id="observacao"></textarea>
 </div>
@@ -329,26 +283,16 @@ button{
 </div>
 
 <div class="rodape">
-<button class="btn">📦 Finalizar Pedido</button>
+<button id="btnFinalizarPedido" class="btn">📦 Finalizar Pedido</button>
 </div>
 
 </div>
 
 <script>
-// Bairros e regras de entrega
-const bairrosGratisAté3Km = [
-  "jardim tarumã",
-  "copavilã",
-  "pendigo",
-  "nova laguna",
-  "laranjeiras"
-];
-
-// Função limpa texto para comparar bairros
+const bairrosGratisAté3Km = ["jardim tarumã","copavilã","pendigo","nova laguna","laranjeiras"];
 function textoLimpo(texto) {
   return texto.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 }
-// Função calcula taxa de entrega
 function calcularTaxaEntrega(distanciaKm, bairro) {
   const bairroLimpo = textoLimpo(bairro);
   if (bairrosGratisAté3Km.includes(bairroLimpo) && distanciaKm <= 3) return 0;
@@ -358,13 +302,11 @@ function calcularTaxaEntrega(distanciaKm, bairro) {
   taxa += kmExtra * 1.5;
   return Math.min(taxa, 20).toFixed(2);
 }
-// Simula distância (substituir depois com API real)
 function calcularDistanciaSimulada(cep, bairro) {
   const bairroLimpo = textoLimpo(bairro);
   if (bairrosGratisAté3Km.includes(bairroLimpo)) return 2.5;
   return 5;
 }
-// Atualiza taxa entrega
 function atualizarTaxaEntrega() {
   const cep = document.getElementById("cep").value;
   const bairro = document.getElementById("bairro").value;
@@ -375,9 +317,9 @@ function atualizarTaxaEntrega() {
   }
   const distanciaKm = calcularDistanciaSimulada(cep, bairro);
   const taxa = calcularTaxaEntrega(distanciaKm, bairro);
-  taxaArea.innerText = taxa == 0 ? "Entrega grátis" : `Taxa de entrega: R$ ${taxa}`;
+  taxaArea.innerText = taxa == 0 ? "🎉 Você ganhou entrega grátis!" : `Taxa de entrega: R$ ${taxa}`;
+  atualizarCarrinho();
 }
-// Busca pelo CEP via API
 async function buscarPorCep() {
   const cepInput = document.getElementById("cep");
   let cep = cepInput.value.replace(/\D/g, '');
@@ -391,7 +333,6 @@ async function buscarPorCep() {
     atualizarTaxaEntrega();
   } catch {}
 }
-// Busca CEP ao digitar a rua
 let timerBuscaRua = null;
 async function buscarCepPelaRua() {
   clearTimeout(timerBuscaRua);
@@ -421,7 +362,6 @@ async function buscarCepPelaRua() {
     } catch {}
   }, 600);
 }
-// Dados de sabores com preços e ingredientes
 const SABORES = {
   "Muçarela": { brotinho: 15, grande: 35, ingredientes: ["Molho", "Muçarela", "Azeitonas", "Orégano"] },
   "Calabresa": { brotinho: 20, grande: 35, ingredientes: ["Molho", "Muçarela", "Calabresa", "Cebola", "Azeitonas", "Orégano"] },
@@ -437,7 +377,6 @@ const SABORES = {
   "Cremosa": { brotinho: 23, grande: 40, ingredientes: ["Molho", "Muçarela", "Catupiry", "Creme de Leite", "Azeitonas", "Orégano"] },
   "Lombo ao Creme": { brotinho: 23, grande: 40, ingredientes: ["Molho", "Muçarela", "Lombinho", "Creme de Leite", "Azeitonas", "Orégano"] }
 };
-// Adicionais e preços
 const ADICIONAIS = [
   { nome: "Catupiry Extra", valor: 4 },
   { nome: "Presunto Extra", valor: 4 },
@@ -447,9 +386,7 @@ const ADICIONAIS = [
   { nome: "Muçarela Extra", valor: 5 },
   { nome: "Bacon Extra", valor: 5 }
 ];
-// Carrinho
 let carrinho = [];
-// Monta lista de adicionais oculta inicialmente
 function montarListaAdicionais() {
   const container = document.getElementById("listaAdicionais");
   container.innerHTML = "";
@@ -459,18 +396,15 @@ function montarListaAdicionais() {
     label.innerHTML = `<input type="checkbox" data-nome="${nome}" value="${valor}"> ${nome} (+R$ ${valor.toFixed(2)})`;
     container.appendChild(label);
   });
-  // Atualiza contador ao clicar checkbox
   container.querySelectorAll("input[type=checkbox]").forEach(input => {
     input.addEventListener("change", atualizarContadorAdicionais);
   });
 }
-// Atualiza contador adicionais selecionados
 function atualizarContadorAdicionais() {
   const selecionados = document.querySelectorAll("#listaAdicionais input[type=checkbox]:checked").length;
   const contador = document.getElementById("contadorAdicionais");
   contador.textContent = selecionados > 0 ? selecionados : "";
 }
-// Alterna visibilidade da lista adicionais
 document.getElementById("btnMostrarAdicionais").addEventListener("click", () => {
   const lista = document.getElementById("listaAdicionais");
   if (lista.style.display === "block") {
@@ -479,28 +413,22 @@ document.getElementById("btnMostrarAdicionais").addEventListener("click", () => 
     lista.style.display = "block";
   }
 });
-// Carrega sabores nos selects
 function carregarSabores() {
   const tamanho = document.getElementById("tamanho").value;
   const sabor1 = document.getElementById("sabor1");
   const sabor2 = document.getElementById("sabor2");
   const tipoPizza = document.getElementById("tipoPizza");
-
   const selecionado1 = sabor1.value;
   const selecionado2 = sabor2.value;
-
   sabor1.innerHTML = `<option value="">Selecione um sabor</option>`;
   sabor2.innerHTML = `<option value="">Selecione um sabor</option>`;
-
   Object.keys(SABORES).forEach(nome => {
     const preco = tamanho === "brotinho" ? SABORES[nome].brotinho : SABORES[nome].grande;
     sabor1.insertAdjacentHTML("beforeend", `<option value="${nome}">${nome} - R$ ${preco.toFixed(2)}</option>`);
     sabor2.insertAdjacentHTML("beforeend", `<option value="${nome}">${nome} - R$ ${preco.toFixed(2)}</option>`);
   });
-
   sabor1.value = selecionado1 && SABORES[selecionado1] ? selecionado1 : "";
   sabor2.value = selecionado2 && SABORES[selecionado2] ? selecionado2 : "";
-
   if(tamanho === "brotinho") {
     tipoPizza.value = "inteira";
     tipoPizza.disabled = true;
@@ -511,14 +439,12 @@ function carregarSabores() {
   }
   atualizarIngredientesPreview();
 }
-// Atualiza ingredientes mostrados
 function atualizarIngredientesPreview() {
   const tamanho = document.getElementById("tamanho").value;
   const tipo = document.getElementById("tipoPizza").value;
   const s1 = document.getElementById("sabor1").value;
   const s2 = document.getElementById("sabor2").value;
   const el = document.getElementById("ingredientes");
-
   if(!s1 || !SABORES[s1]) {
     el.innerText = "";
     return;
@@ -529,17 +455,15 @@ function atualizarIngredientesPreview() {
     el.innerText = `Ingredientes: ${SABORES[s1].ingredientes.join(", ")}`;
   }
 }
-// Atualiza o carrinho na tela
 function atualizarCarrinho() {
   const container = document.getElementById("carrinho");
   const totalEl = document.querySelector(".total");
-
   if (carrinho.length === 0) {
     container.innerHTML = `<div class="item-carrinho">Nenhum item adicionado.</div>`;
     totalEl.innerText = "R$ 0,00";
+    atualizarTaxaEntrega(); 
     return;
   }
-
   container.innerHTML = carrinho.map((item, idx) => `
     <div class="item-carrinho">
       <b>${item.descricao}</b><br/>
@@ -551,22 +475,24 @@ function atualizarCarrinho() {
       </div>
     </div>
   `).join("");
-
-  const total = carrinho.reduce((a, i) => a + i.valor, 0);
+  const subtotal = carrinho.reduce((a, i) => a + i.valor, 0);
+  const cep = document.getElementById("cep").value;
+  const bairro = document.getElementById("bairro").value;
+  const distanciaKm = calcularDistanciaSimulada(cep, bairro);
+  const taxa = Number(calcularTaxaEntrega(distanciaKm, bairro));
+  const total = subtotal + taxa;
   totalEl.innerText = "R$ " + total.toFixed(2);
+  atualizarTaxaEntrega(); // só pra mostrar mensagem na área taxa
 }
-// Remove item do carrinho
 function removerItem(idx) {
   carrinho.splice(idx, 1);
   atualizarCarrinho();
 }
-// Adiciona pizza ao carrinho
 document.getElementById("btnAdicionarPizza").addEventListener("click", () => {
   const tamanho = document.getElementById("tamanho").value;
   const tipo = document.getElementById("tipoPizza").value;
   const sabor1 = document.getElementById("sabor1").value;
   const sabor2 = document.getElementById("sabor2").value;
-
   if (!sabor1 || !SABORES[sabor1]) {
     alert("Escolha o sabor 1.");
     return;
@@ -582,7 +508,6 @@ document.getElementById("btnAdicionarPizza").addEventListener("click", () => {
   let descricao = "";
   let valor = 0;
   let ingredientes = "";
-
   if (tamanho === "brotinho") {
     descricao = `Brotinho 25cm - ${sabor1}`;
     valor = SABORES[sabor1].brotinho;
@@ -603,12 +528,10 @@ document.getElementById("btnAdicionarPizza").addEventListener("click", () => {
     }));
   const valorAdicional = adicionaisSelecionados.reduce((acc, a) => acc + a.valor, 0);
   const nomesAdicionais = adicionaisSelecionados.map(a => a.nome);
-
   if (nomesAdicionais.length) {
     descricao += " + " + nomesAdicionais.join(", ");
   }
   valor += valorAdicional;
-
   carrinho.push({
     tipo: "pizza",
     descricao,
@@ -617,12 +540,10 @@ document.getElementById("btnAdicionarPizza").addEventListener("click", () => {
     valor
   });
   atualizarCarrinho();
-  // limpa seleção adicionais
   document.querySelectorAll("#listaAdicionais input:checked").forEach(i => i.checked = false);
   atualizarContadorAdicionais();
   alert("Pizza adicionada ao carrinho!");
 });
-// Adiciona bebida ao carrinho
 document.getElementById("btnAdicionarBebida").addEventListener("click", () => {
   const sel = document.getElementById("bebida");
   if (!sel.value) {
@@ -642,8 +563,6 @@ document.getElementById("btnAdicionarBebida").addEventListener("click", () => {
   alert("Bebida adicionada ao carrinho!");
   sel.value = "";
 });
-
-// Eventos para atualização dinâmica
 document.getElementById("tamanho").addEventListener("change", carregarSabores);
 document.getElementById("tipoPizza").addEventListener("change", () => {
   carregarSabores();
@@ -651,8 +570,6 @@ document.getElementById("tipoPizza").addEventListener("change", () => {
 });
 document.getElementById("sabor1").addEventListener("change", atualizarIngredientesPreview);
 document.getElementById("sabor2").addEventListener("change", atualizarIngredientesPreview);
-
-// Preenchimento automático CEP <-> Rua e taxa entrega
 document.getElementById("cep").addEventListener("input", () => {
   if (document.getElementById("cep").value.replace(/\D/g, '').length === 8) {
     buscarPorCep();
@@ -661,14 +578,55 @@ document.getElementById("cep").addEventListener("input", () => {
 document.getElementById("rua").addEventListener("input", () => buscarCepPelaRua());
 document.getElementById("bairro").addEventListener("input", atualizarTaxaEntrega);
 document.getElementById("numero").addEventListener("input", atualizarTaxaEntrega);
-
-// Inicializações
 montarListaAdicionais();
 carregarSabores();
 atualizarTaxaEntrega();
 atualizarContadorAdicionais();
 
-</script>
+// Monta mensagem do pedido para WhatsApp
+function montarTextoPedido() {
+  const nome = document.getElementById("nome").value.trim();
+  const telefone = document.getElementById("telefone").value.trim();
+  const cep = document.getElementById("cep").value.trim();
+  const rua = document.getElementById("rua").value.trim();
+  const numero = document.getElementById("numero").value.trim();
+  const bairro = document.getElementById("bairro").value.trim();
+  const observacao = document.getElementById("observacao").value.trim();
+  const distanciaKm = calcularDistanciaSimulada(cep, bairro);
+  const taxaEntrega = calcularTaxaEntrega(distanciaKm, bairro);
 
+  let texto = "KING VENTURA PIZZARIA\n\n";
+  texto += `Cliente: ${nome}\n`;
+  texto += `Telefone: ${telefone}\n`;
+  texto += `Endereço: ${rua} nº ${numero}, ${bairro}\n`;
+  texto += `CEP: ${cep}\n`;
+  texto += `Observação: ${observacao}\n\n`;
+  texto += "ITENS DO PEDIDO:\n";
+
+  carrinho.forEach((item, i) => {
+    texto += `${i+1}. ${item.descricao} - R$ ${item.valor.toFixed(2)}\n`;
+    if (item.ingredientes) texto += `   Ingredientes: ${item.ingredientes}\n`;
+    if(item.observacao) texto += `   Obs: ${item.observacao}\n`;
+  });
+
+  texto += `\nTaxa de Entrega: R$ ${taxaEntrega}\n`;
+  const total = carrinho.reduce((acc, item) => acc + item.valor, 0) + Number(taxaEntrega);
+  texto += `TOTAL: R$ ${total.toFixed(2)}\n`;
+  return texto;
+}
+
+// Botão finalizar pedido
+document.getElementById("btnFinalizarPedido").addEventListener("click", () => {
+  if (carrinho.length === 0) {
+    alert("Adicione algum item ao carrinho antes de finalizar.");
+    return;
+  }
+  const texto = montarTextoPedido();
+  const numeroWhats = "5567991476156";
+  const url = "https://wa.me/" + numeroWhats + "?text=" + encodeURIComponent(texto);
+  window.open(url, "_blank");
+});
+
+</script>
 </body>
 </html>
