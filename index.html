@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>King Ventura Cliente</title>
+
+<style>
+body{
+  margin:0;
+  padding:15px;
+  background:#05080f;
+  color:#fff;
+  font-family:Arial,sans-serif;
+}
+
+.container{
+  max-width:800px;
+  margin:auto;
+}
+
+.card{
+  background:#0b1526;
+  border:1px solid #1e3560;
+  border-radius:12px;
+  padding:15px;
+  margin-bottom:15px;
+}
+
+h1,h2{
+  color:#4a90e2;
+}
+
+input,
+select,
+textarea{
+  width:100%;
+  padding:10px;
+  border-radius:8px;
+  border:1px solid #1e3560;
+  background:#132241;
+  color:white;
+  box-sizing:border-box;
+  margin-top:5px;
+}
+
+button{
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:8px;
+  background:#1b4f9c;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+button:hover{
+  opacity:0.9;
+}
+
+.item{
+  background:#132241;
+  padding:10px;
+  margin-top:8px;
+  border-radius:8px;
+}
+
+.total{
+  font-size:22px;
+  font-weight:bold;
+  color:#4a90e2;
+  text-align:right;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="card">
+<h1>🍕 KING VENTURA PIZZARIA</h1>
+<p>Monte seu pedido</p>
+</div>
+
+<div class="card">
+<h2>👤 Dados do Cliente</h2>
+
+<input id="nome" placeholder="Nome">
+
+<br><br>
+
+<input id="telefone" placeholder="Telefone">
+
+<br><br>
+
+<input id="endereco" placeholder="Endereço">
+
+<br><br>
+
+<textarea id="observacao" placeholder="Observação"></textarea>
+</div>
+
+<div class="card">
+<h2>🍕 Pizza</h2>
+
+<select id="tamanho">
+<option>Brotinho 25cm</option>
+<option>Grande 35cm</option>
+</select>
+
+<br><br>
+
+<select id="tipoPizza">
+<option>Inteira</option>
+<option>Meio a Meio</option>
+</select>
+
+<br><br>
+
+<select id="sabor1">
+<option>Calabresa</option>
+<option>Muçarela</option>
+<option>Frango com Catupiry</option>
+<option>Bacon</option>
+</select>
+
+<br><br>
+
+<button type="button">
+➕ Escolher Adicionais
+</button>
+
+</div>
+
+<div class="card">
+<h2>🥤 Bebidas</h2>
+
+<select id="bebida">
+<option>Nenhuma</option>
+<option>Coca-Cola 2L</option>
+<option>Guaraná 1L</option>
+<option>Coca-Cola Lata</option>
+</select>
+
+</div>
+
+<div class="card">
+<h2>🛒 Carrinho</h2>
+
+<div id="carrinho">
+Nenhum item adicionado
+</div>
+
+<br>
+
+<div class="total">
+R$ 0,00
+</div>
+
+<br>
+
+<button>
+📦 Gerar Pedido
+</button>
+
+</div>
+
+</div>
+
+</body>
+</html>
