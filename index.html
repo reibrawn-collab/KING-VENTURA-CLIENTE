@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>King Ventura Cliente</title>
 <style>
 :root {
@@ -15,10 +15,7 @@
   --muted: #9fb4d6;
 }
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: Arial, sans-serif;
+  margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif;
 }
 body {
   background: var(--bg);
@@ -170,100 +167,94 @@ button {
 </head>
 <body>
 <div class="container">
-<div class="logo" style="text-align:center;">
-<h1>👑 KING VENTURA</h1>
-<div style="display:flex; justify-content:center; align-items:center; gap:6px; margin:10px auto;">
-<div style="width:50px; height:6px; background:#009246; border-radius:10px;"></div>
-<div style="width:50px; height:6px; background:#ffffff; border-radius:10px;"></div>
-<div style="width:50px; height:6px; background:#ce2b37; border-radius:10px;"></div>
-</div>
-<p>Monte seu pedido online</p>
-</div>
-
-<div class="card">
-  <h2>🍕 Escolha sua Pizza</h2>
-  <div class="grid-4">
-    <div>
-      <label for="tamanho">Tamanho</label>
-      <select id="tamanho">
-        <option value="grande">Grande 35cm</option>
-        <option value="brotinho">Brotinho 25cm</option>
-      </select>
-    </div>
-    <div>
-      <label for="tipoPizza">Tipo</label>
-      <select id="tipoPizza">
-        <option value="inteira">Inteira</option>
-        <option value="meio">Meio a Meio</option>
-      </select>
-    </div>
-    <div style="grid-column: span 2;">
-      <label for="sabor1">Sabor 1</label>
-      <select id="sabor1" title="Selecione um sabor"></select>
-    </div>
+  <div class="logo" style="text-align:center;">
+    <h1>👑 KING VENTURA</h1>
+    <p>Monte seu pedido online</p>
   </div>
 
-<d<div id="boxSabor2" style="margin-top: 15px; display:none;">
-  <label for="sabor2">Sabor 2 (Meio a Meio)</label>
-  <select id="sabor2" title="Selecione um sabor"></select>
-</div>
-<div style="margin-top: 15px;">
-  <label for="listaAdicionais">➕ Adicionais</label>
-  <select id="listaAdicionais" multiple size="6" style="min-height:110px;"></select>
-</div>
+  <div class="card">
+    <h2>🍕 Escolha sua Pizza</h2>
+    <div class="grid-4">
+      <div>
+        <label for="tamanho">Tamanho</label>
+        <select id="tamanho">
+          <option value="grande">Grande 35cm</option>
+          <option value="brotinho">Brotinho 25cm</option>
+        </select>
+      </div>
+      <div>
+        <label for="tipoPizza">Tipo</label>
+        <select id="tipoPizza">
+          <option value="inteira">Inteira</option>
+          <option value="meio">Meio a Meio</option>
+        </select>
+      </div>
+      <div style="grid-column: span 2;">
+        <label for="sabor1">Sabor 1</label>
+        <select id="sabor1" title="Selecione um sabor"></select>
+      </div>
+    </div>
 
+    <div id="boxSabor2" style="margin-top: 15px; display:none;">
+      <label for="sabor2">Sabor 2 (Meio a Meio)</label>
+      <select id="sabor2" title="Selecione um sabor"></select>
+    </div>
 
+    <div style="margin-top: 15px;">
+      <label for="listaAdicionais">➕ Adicionais</label>
+      <select id="listaAdicionais" multiple size="6" style="min-height:110px;"></select>
+    </div>
 
-  <div id="ingredientes"></div>
+    <div id="ingredientes"></div>
 
-  <button id="btnAdicionarPizza" class="btn" style="margin-top:15px;">Adicionar Pizza ao Carrinho</button>
-</div>
-
-<div class="card">
-  <h2>🥤 Bebidas</h2>
-  <select id="bebida">
-    <option value="">Nenhuma</option>
-    <option value="16">Coca-Cola 2L - R$ 16,00</option>
-    <option value="10">Guaraná 1L - R$ 10,00</option>
-    <option value="6">Coca-Cola Lata 310ml - R$ 6,00</option>
-  </select>
-  <button id="btnAdicionarBebida" class="btn" style="margin-top:12px;">Adicionar Bebida ao Carrinho</button>
-</div>
-
-<div class="card">
-  <h2>👤 Dados do Cliente</h2>
-  <label>Nome</label>
-  <input id="nome" />
-  <label>Telefone</label>
-  <input id="telefone" />
-  <label>CEP</label>
-  <input id="cep" maxlength="9" placeholder="Digite seu CEP" />
-  <label>Rua</label>
-  <input id="rua" placeholder="Rua" />
-  <label>Número</label>
-  <input id="numero" placeholder="Número" />
-  <label>Bairro</label>
-  <input id="bairro" placeholder="Bairro" />
-  <label>Observação</label>
-  <textarea id="observacao"></textarea>
-</div>
-
-<div class="card">
-  <h2>🛒 Carrinho</h2>
-  <div id="carrinho">
-    <div class="item-carrinho">Nenhum item adicionado.</div>
+    <button id="btnAdicionarPizza" class="btn" style="margin-top:15px;">Adicionar Pizza ao Carrinho</button>
   </div>
-  <div class="total">R$ 0,00</div>
-  <div id="taxaEntregaArea" class="entrega-taxa"></div>
-</div>
 
-<div class="rodape">
-  Siga a gente no Instagram <a href="https://instagram.com/kingventura_pizzaria" target="_blank" rel="noopener">@kingventura_pizzaria</a>
-</div>
+  <div class="card">
+    <h2>🥤 Bebidas</h2>
+    <select id="bebida">
+      <option value="">Nenhuma</option>
+      <option value="16">Coca-Cola 2L - R$ 16,00</option>
+      <option value="10">Guaraná 1L - R$ 10,00</option>
+      <option value="6">Coca-Cola Lata 310ml - R$ 6,00</option>
+    </select>
+    <button id="btnAdicionarBebida" class="btn" style="margin-top:12px;">Adicionar Bebida ao Carrinho</button>
+  </div>
 
-<div class="rodape">
-  <button id="btnFinalizarPedido" class="btn">📦 Finalizar Pedido</button>
-</div>
+  <div class="card">
+    <h2>👤 Dados do Cliente</h2>
+    <label>Nome</label>
+    <input id="nome" />
+    <label>Telefone</label>
+    <input id="telefone" />
+    <label>CEP</label>
+    <input id="cep" maxlength="9" placeholder="Digite seu CEP" />
+    <label>Rua</label>
+    <input id="rua" placeholder="Rua" />
+    <label>Número</label>
+    <input id="numero" placeholder="Número" />
+    <label>Bairro</label>
+    <input id="bairro" placeholder="Bairro" />
+    <label>Observação</label>
+    <textarea id="observacao"></textarea>
+  </div>
+
+  <div class="card">
+    <h2>🛒 Carrinho</h2>
+    <div id="carrinho">
+      <div class="item-carrinho">Nenhum item adicionado.</div>
+    </div>
+    <div class="total">R$ 0,00</div>
+    <div id="taxaEntregaArea" class="entrega-taxa"></div>
+  </div>
+
+  <div class="rodape">
+    Siga a gente no Instagram <a href="https://instagram.com/kingventura_pizzaria" target="_blank" rel="noopener">@kingventura_pizzaria</a>
+  </div>
+
+  <div class="rodape">
+    <button id="btnFinalizarPedido" class="btn">📦 Finalizar Pedido</button>
+  </div>
 </div>
 
 <script>
@@ -365,10 +356,10 @@ function atualizarIngredientesPreview() {
   }
 }
 
-function montarListaAdicionais(){
+function montarListaAdicionais() {
   const container = document.getElementById("listaAdicionais");
-  container.innerHTML = '';
-  ADICIONAIS.forEach(({nome, valor})=>{
+  container.innerHTML = "";
+  ADICIONAIS.forEach(({ nome, valor }) => {
     const option = document.createElement("option");
     option.value = valor;
     option.textContent = `${nome} (+R$ ${valor.toFixed(2)})`;
@@ -376,7 +367,6 @@ function montarListaAdicionais(){
     container.appendChild(option);
   });
 }
-
 
 let carrinho = [];
 
@@ -457,11 +447,10 @@ document.getElementById("btnAdicionarPizza").addEventListener("click", () => {
     ingredientes = SABORES[sabor1].ingredientes.join(", ");
   }
 
- const adicionaisSelecionados = Array.from(document.getElementById("listaAdicionais").selectedOptions).map(opt => ({
-  nome: opt.dataset.nome,
-  valor: Number(opt.value)
-}));
-
+  const adicionaisSelecionados = Array.from(document.getElementById("listaAdicionais").selectedOptions).map(opt => ({
+    nome: opt.dataset.nome,
+    valor: Number(opt.value)
+  }));
 
   const valorAdicional = adicionaisSelecionados.reduce((a, v) => a + v.valor, 0);
   const nomesAdicionais = adicionaisSelecionados.map(a => a.nome);
@@ -474,7 +463,6 @@ document.getElementById("btnAdicionarPizza").addEventListener("click", () => {
   carrinho.push({ tipo: "pizza", descricao, ingredientes, observacao: "", valor });
   atualizarCarrinho();
 
-  // Limpar seleção adicionais
   Array.from(document.getElementById("listaAdicionais").options).forEach(opt => opt.selected = false);
 
   alert("Pizza adicionada ao carrinho!");
@@ -529,6 +517,5 @@ carregarSabores();
 montarListaAdicionais();
 atualizarTaxaEntrega();
 </script>
-
 </body>
 </html>
