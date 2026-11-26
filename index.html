@@ -40,11 +40,12 @@ body{
 
 .logo h1{
   color:var(--azul);
-  font-size:32px;
+  font-size:36px;
 }
 
 .logo p{
   color:var(--muted);
+  font-size:18px;
 }
 
 .card{
@@ -141,13 +142,14 @@ button{
 }
 
 .extra-list {
-  max-height: 150px;
+  max-height: 140px;
   overflow-y: auto;
   background: var(--card2);
   border: 1px solid var(--border);
   border-radius: 10px;
-  padding: 10px;
-  margin-top: 6px;
+  padding: 10px 12px;
+  margin-top: 8px;
+  display: none;
 }
 
 .extra-item {
@@ -197,12 +199,31 @@ button{
   border:1px solid var(--border);
   margin-top:20px;
 }
+
+.adicionais-btn-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+  cursor: pointer;
+  user-select: none;
+  color: var(--azul);
+  font-weight: 600;
+}
+
+.adicionais-count {
+  background: var(--azul);
+  border-radius: 20px;
+  padding: 2px 10px;
+  color: white;
+  font-size: 0.85rem;
+}
+
 @media(max-width:700px){
 .logo h1{
   font-size:26px;
 }
 }
-
 </style>
 </head>
 
@@ -211,54 +232,15 @@ button{
 <div class="container">
 
 <div class="logo" style="text-align:center;">
-<h1 style="
-color:#f4c542;
-font-size:36px;
-margin-bottom:5px;
-text-align:center;
-">
-👑 KING VENTURA
-</h1>
+<h1>👑 KING VENTURA</h1>
 
-<div style="
-display:flex;
-justify-content:center;
-align-items:center;
-gap:6px;
-margin:10px auto;
-">
-
-<div style="
-width:50px;
-height:6px;
-background:#009246;
-border-radius:10px;
-"></div>
-
-<div style="
-width:50px;
-height:6px;
-background:#ffffff;
-border-radius:10px;
-"></div>
-
-<div style="
-width:50px;
-height:6px;
-background:#ce2b37;
-border-radius:10px;
-"></div>
-
+<div style="display:flex; justify-content:center; align-items:center; gap:6px; margin:10px auto;">
+<div style="width:50px; height:6px; background:#009246; border-radius:10px;"></div>
+<div style="width:50px; height:6px; background:#ffffff; border-radius:10px;"></div>
+<div style="width:50px; height:6px; background:#ce2b37; border-radius:10px;"></div>
 </div>
 
-<p style="
-text-align:center;
-color:#9fb4d6;
-font-size:18px;
-">
-Monte seu pedido online
-</p>
-
+<p>Monte seu pedido online</p>
 </div>
 
 <div class="card">
@@ -317,10 +299,11 @@ Monte seu pedido online
 
 <div id="ingredientes" style="margin-top:12px; font-size: 0.9rem; color: var(--muted);"></div>
 
-<div>
-<label>Adicionais</label>
-<div class="extra-list" id="listaAdicionais"></div>
+<div class="adicionais-btn-row" id="btnMostrarAdicionais">
+  ➕ Escolher Adicionais <span class="adicionais-count" id="contadorAdicionais">0</span>
 </div>
+
+<div class="extra-list" id="listaAdicionais"></div>
 
 <button id="btnAdicionarPizza" class="btn" style="margin-top:15px;">Adicionar Pizza ao Carrinho</button>
 </div>
@@ -352,7 +335,7 @@ Monte seu pedido online
 </div>
 
 <script>
-//--- Bairros e regras de entrega ---
+// Bairros e regras de entrega
 const bairrosGratisAté3Km = [
   "jardim tarumã",
   "copavilã",
@@ -361,32 +344,27 @@ const bairrosGratisAté3Km = [
   "laranjeiras"
 ];
 
-// Funções utilitárias texto limpo (remover acentos e normalizar)
+// Função limpa texto para comparar bairros
 function textoLimpo(texto) {
   return texto.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 }
-
 // Função calcula taxa de entrega
 function calcularTaxaEntrega(distanciaKm, bairro) {
   const bairroLimpo = textoLimpo(bairro);
-  if (bairrosGratisAté3Km.includes(bairroLimpo) && distanciaKm <= 3) {
-    return 0;
-  }
-  if (distanciaKm <= 3) return 0; 
-  let taxa = 5; 
+  if (bairrosGratisAté3Km.includes(bairroLimpo) && distanciaKm <= 3) return 0;
+  if (distanciaKm <= 3) return 0;
+  let taxa = 5;
   const kmExtra = Math.max(0, distanciaKm - 3);
   taxa += kmExtra * 1.5;
   return Math.min(taxa, 20).toFixed(2);
 }
-
-// Função simula distância — pode substituir por cálculo real via API no futuro
+// Simula distância (substituir depois com API real)
 function calcularDistanciaSimulada(cep, bairro) {
   const bairroLimpo = textoLimpo(bairro);
   if (bairrosGratisAté3Km.includes(bairroLimpo)) return 2.5;
   return 5;
 }
-
-// Exibir taxa para o cliente
+// Atualiza taxa entrega
 function atualizarTaxaEntrega() {
   const cep = document.getElementById("cep").value;
   const bairro = document.getElementById("bairro").value;
@@ -399,8 +377,7 @@ function atualizarTaxaEntrega() {
   const taxa = calcularTaxaEntrega(distanciaKm, bairro);
   taxaArea.innerText = taxa == 0 ? "Entrega grátis" : `Taxa de entrega: R$ ${taxa}`;
 }
-
-// Preenchimento automático CEP->Rua/Bairro via ViaCEP
+// Busca pelo CEP via API
 async function buscarPorCep() {
   const cepInput = document.getElementById("cep");
   let cep = cepInput.value.replace(/\D/g, '');
@@ -408,19 +385,13 @@ async function buscarPorCep() {
   try {
     const resposta = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
     const dados = await resposta.json();
-    if (dados.erro) {
-      atualizarTaxaEntrega();
-      return;
-    }
+    if (dados.erro) return;
     document.getElementById("rua").value = dados.logradouro || "";
     document.getElementById("bairro").value = dados.bairro || "";
     atualizarTaxaEntrega();
-  } catch (e) {
-    atualizarTaxaEntrega();
-  }
+  } catch {}
 }
-
-// Busca CEP conforme digita rua (ViaCEP, Campo Grande)
+// Busca CEP ao digitar a rua
 let timerBuscaRua = null;
 async function buscarCepPelaRua() {
   clearTimeout(timerBuscaRua);
@@ -438,7 +409,7 @@ async function buscarCepPelaRua() {
         let escolhido = lista[0];
         if (bairro) {
           const bairroLower = bairro.toLowerCase();
-          const achado = lista.find(e => e.bairro && e.bairro.toLowerCase() === bairroLower);
+          const achado = lista.find(e=> e.bairro && e.bairro.toLowerCase() === bairroLower);
           if (achado) escolhido = achado;
         }
         if (escolhido) {
@@ -447,13 +418,10 @@ async function buscarCepPelaRua() {
           atualizarTaxaEntrega();
         }
       }
-    } catch (e) {
-      // Silenciar erro de api na busca
-    }
+    } catch {}
   }, 600);
 }
-
-// Lista de sabores base
+// Dados de sabores com preços e ingredientes
 const SABORES = {
   "Muçarela": { brotinho: 15, grande: 35, ingredientes: ["Molho", "Muçarela", "Azeitonas", "Orégano"] },
   "Calabresa": { brotinho: 20, grande: 35, ingredientes: ["Molho", "Muçarela", "Calabresa", "Cebola", "Azeitonas", "Orégano"] },
@@ -469,8 +437,7 @@ const SABORES = {
   "Cremosa": { brotinho: 23, grande: 40, ingredientes: ["Molho", "Muçarela", "Catupiry", "Creme de Leite", "Azeitonas", "Orégano"] },
   "Lombo ao Creme": { brotinho: 23, grande: 40, ingredientes: ["Molho", "Muçarela", "Lombinho", "Creme de Leite", "Azeitonas", "Orégano"] }
 };
-
-// Adicionais com valores
+// Adicionais e preços
 const ADICIONAIS = [
   { nome: "Catupiry Extra", valor: 4 },
   { nome: "Presunto Extra", valor: 4 },
@@ -480,16 +447,45 @@ const ADICIONAIS = [
   { nome: "Muçarela Extra", valor: 5 },
   { nome: "Bacon Extra", valor: 5 }
 ];
-
 // Carrinho
 let carrinho = [];
-
-// Inicializa seleção de sabores nos selects
+// Monta lista de adicionais oculta inicialmente
+function montarListaAdicionais() {
+  const container = document.getElementById("listaAdicionais");
+  container.innerHTML = "";
+  ADICIONAIS.forEach(({nome, valor}) => {
+    const label = document.createElement("label");
+    label.className = "extra-item";
+    label.innerHTML = `<input type="checkbox" data-nome="${nome}" value="${valor}"> ${nome} (+R$ ${valor.toFixed(2)})`;
+    container.appendChild(label);
+  });
+  // Atualiza contador ao clicar checkbox
+  container.querySelectorAll("input[type=checkbox]").forEach(input => {
+    input.addEventListener("change", atualizarContadorAdicionais);
+  });
+}
+// Atualiza contador adicionais selecionados
+function atualizarContadorAdicionais() {
+  const selecionados = document.querySelectorAll("#listaAdicionais input[type=checkbox]:checked").length;
+  const contador = document.getElementById("contadorAdicionais");
+  contador.textContent = selecionados > 0 ? selecionados : "";
+}
+// Alterna visibilidade da lista adicionais
+document.getElementById("btnMostrarAdicionais").addEventListener("click", () => {
+  const lista = document.getElementById("listaAdicionais");
+  if (lista.style.display === "block") {
+    lista.style.display = "none";
+  } else {
+    lista.style.display = "block";
+  }
+});
+// Carrega sabores nos selects
 function carregarSabores() {
   const tamanho = document.getElementById("tamanho").value;
   const sabor1 = document.getElementById("sabor1");
   const sabor2 = document.getElementById("sabor2");
-  const tipo = document.getElementById("tipoPizza");
+  const tipoPizza = document.getElementById("tipoPizza");
+
   const selecionado1 = sabor1.value;
   const selecionado2 = sabor2.value;
 
@@ -498,27 +494,24 @@ function carregarSabores() {
 
   Object.keys(SABORES).forEach(nome => {
     const preco = tamanho === "brotinho" ? SABORES[nome].brotinho : SABORES[nome].grande;
-    const optionHTML = `<option value="${nome}">${nome} - R$ ${preco.toFixed(2)}</option>`;
-    sabor1.insertAdjacentHTML("beforeend", optionHTML);
-    sabor2.insertAdjacentHTML("beforeend", optionHTML);
+    sabor1.insertAdjacentHTML("beforeend", `<option value="${nome}">${nome} - R$ ${preco.toFixed(2)}</option>`);
+    sabor2.insertAdjacentHTML("beforeend", `<option value="${nome}">${nome} - R$ ${preco.toFixed(2)}</option>`);
   });
 
   sabor1.value = selecionado1 && SABORES[selecionado1] ? selecionado1 : "";
   sabor2.value = selecionado2 && SABORES[selecionado2] ? selecionado2 : "";
 
   if(tamanho === "brotinho") {
-    tipo.value = "inteira";
-    tipo.disabled = true;
+    tipoPizza.value = "inteira";
+    tipoPizza.disabled = true;
     document.getElementById("boxSabor2").style.display = "none";
   } else {
-    tipo.disabled = false;
-    document.getElementById("boxSabor2").style.display = tipo.value === "meio" ? "block" : "none";
+    tipoPizza.disabled = false;
+    document.getElementById("boxSabor2").style.display = tipoPizza.value === "meio" ? "block" : "none";
   }
-
   atualizarIngredientesPreview();
 }
-
-// Atualiza ingredientes mostrados conforme seleção
+// Atualiza ingredientes mostrados
 function atualizarIngredientesPreview() {
   const tamanho = document.getElementById("tamanho").value;
   const tipo = document.getElementById("tipoPizza").value;
@@ -530,27 +523,13 @@ function atualizarIngredientesPreview() {
     el.innerText = "";
     return;
   }
-
   if(tamanho === "grande" && tipo === "meio" && s2 && SABORES[s2]) {
     el.innerText = `Ingredientes — 50% ${s1}: ${SABORES[s1].ingredientes.join(", ")} | 50% ${s2}: ${SABORES[s2].ingredientes.join(", ")}`;
   } else {
     el.innerText = `Ingredientes: ${SABORES[s1].ingredientes.join(", ")}`;
   }
 }
-
-// Monta lista de adicionais com checkboxes
-function montarListaAdicionais() {
-  const container = document.getElementById("listaAdicionais");
-  container.innerHTML = "";
-  ADICIONAIS.forEach(({nome, valor}) => {
-    const label = document.createElement("label");
-    label.className = "extra-item";
-    label.innerHTML = `<input type="checkbox" data-nome="${nome}" value="${valor}"> ${nome} (+R$ ${valor.toFixed(2)})`;
-    container.appendChild(label);
-  });
-}
-
-// Atualiza carrinho na tela
+// Atualiza o carrinho na tela
 function atualizarCarrinho() {
   const container = document.getElementById("carrinho");
   const totalEl = document.querySelector(".total");
@@ -576,13 +555,11 @@ function atualizarCarrinho() {
   const total = carrinho.reduce((a, i) => a + i.valor, 0);
   totalEl.innerText = "R$ " + total.toFixed(2);
 }
-
 // Remove item do carrinho
 function removerItem(idx) {
   carrinho.splice(idx, 1);
   atualizarCarrinho();
 }
-
 // Adiciona pizza ao carrinho
 document.getElementById("btnAdicionarPizza").addEventListener("click", () => {
   const tamanho = document.getElementById("tamanho").value;
@@ -602,7 +579,6 @@ document.getElementById("btnAdicionarPizza").addEventListener("click", () => {
     alert("Escolha o sabor 2 para pizza meio a meio.");
     return;
   }
-
   let descricao = "";
   let valor = 0;
   let ingredientes = "";
@@ -620,7 +596,6 @@ document.getElementById("btnAdicionarPizza").addEventListener("click", () => {
     valor = SABORES[sabor1].grande;
     ingredientes = SABORES[sabor1].ingredientes.join(", ");
   }
-
   const adicionaisSelecionados = Array.from(document.querySelectorAll("#listaAdicionais input:checked"))
     .map(e => ({
       nome: e.dataset.nome,
@@ -641,15 +616,12 @@ document.getElementById("btnAdicionarPizza").addEventListener("click", () => {
     observacao: "",
     valor
   });
-
   atualizarCarrinho();
-
   // limpa seleção adicionais
   document.querySelectorAll("#listaAdicionais input:checked").forEach(i => i.checked = false);
-
+  atualizarContadorAdicionais();
   alert("Pizza adicionada ao carrinho!");
 });
-
 // Adiciona bebida ao carrinho
 document.getElementById("btnAdicionarBebida").addEventListener("click", () => {
   const sel = document.getElementById("bebida");
@@ -671,18 +643,16 @@ document.getElementById("btnAdicionarBebida").addEventListener("click", () => {
   sel.value = "";
 });
 
-// Eventos para carregamento inicial e atualização
+// Eventos para atualização dinâmica
 document.getElementById("tamanho").addEventListener("change", carregarSabores);
 document.getElementById("tipoPizza").addEventListener("change", () => {
   carregarSabores();
-  // Ajusta visibilidade sabor2
-  const tipo = document.getElementById("tipoPizza").value;
-  document.getElementById("boxSabor2").style.display = tipo === "meio" ? "block" : "none";
+  document.getElementById("boxSabor2").style.display = document.getElementById("tipoPizza").value === "meio" ? "block" : "none";
 });
 document.getElementById("sabor1").addEventListener("change", atualizarIngredientesPreview);
 document.getElementById("sabor2").addEventListener("change", atualizarIngredientesPreview);
 
-// Preenchimento automático CEP, Rua e bairro e taxa entrega (mantido)
+// Preenchimento automático CEP <-> Rua e taxa entrega
 document.getElementById("cep").addEventListener("input", () => {
   if (document.getElementById("cep").value.replace(/\D/g, '').length === 8) {
     buscarPorCep();
@@ -692,16 +662,11 @@ document.getElementById("rua").addEventListener("input", () => buscarCepPelaRua(
 document.getElementById("bairro").addEventListener("input", atualizarTaxaEntrega);
 document.getElementById("numero").addEventListener("input", atualizarTaxaEntrega);
 
-function buscarPorCep() { /* Exatamente como já definido acima */ return window.buscarPorCep && window.buscarPorCep(); }
-function buscarCepPelaRua() { /* Exatamente como já definido acima */ return window.buscarCepPelaRua && window.buscarCepPelaRua(); }
-function atualizarTaxaEntrega() { /* Igual acima */ return window.atualizarTaxaEntrega && window.atualizarTaxaEntrega(); }
-
-// Monta lista de adicionais no carregamento
+// Inicializações
 montarListaAdicionais();
-
-// Inicializa sabores e ingredientes no carregamento
 carregarSabores();
 atualizarTaxaEntrega();
+atualizarContadorAdicionais();
 
 </script>
 
