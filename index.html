@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>King Ventura Cliente</title>
 <style>
 :root{
@@ -88,33 +88,74 @@ button{
 .btn:hover{
   opacity:.9;
 }
-.sabores-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:12px;
+#ingredientes {
+  margin-top: 12px;
+  font-size: 0.9rem;
+  color: var(--muted);
+  min-height: 40px;
 }
-.sabor-card{
-  background:var(--card2);
-  border:2px solid transparent;
-  border-radius:12px;
-  padding:15px;
-  cursor:pointer;
-  transition:.2s;
+.custom-select-container{
+  position: relative;
+  user-select: none;
 }
-.sabor-card:hover{
-  border-color:var(--azul);
+.custom-select{
+  background: var(--card2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px;
+  color: var(--texto);
+  cursor: pointer;
 }
-.sabor-card.selected{
-  border-color:var(--azul);
-  box-shadow:0 0 10px rgba(74,144,226,.4);
+.custom-select:after{
+  content: "▼";
+  position: absolute;
+  right: 15px;
+  top:50%;
+  transform: translateY(-50%);
+  pointer-events:none;
+  font-size: 0.7rem;
+  color: var(--muted);
 }
-.sabor-nome{
-  font-size:18px;
-  font-weight:bold;
+.custom-options {
+  position: absolute;
+  background: var(--card2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  width: 100%;
+  max-height: 160px;
+  overflow-y: auto;
+  margin-top: 4px;
+  z-index: 100;
+  display: none;
 }
-.sabor-preco{
-  color:var(--azul);
-  margin-top:8px;
+.custom-options.active {
+  display: block;
+}
+.custom-option{
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  color: var(--texto);
+}
+.custom-option:last-child {
+  border-bottom: none;
+}
+.custom-option:hover, .custom-option.selected {
+  background: var(--azul);
+  color: white;
+}
+.custom-option .nome {
+  font-weight: bold;
+}
+.custom-option .preco {
+  float: right;
+  color: #77a2ee;
+}
+.custom-option .ingredientes {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-top: 4px;
+  clear: both;
 }
 .extra-list select {
   width: 100%;
@@ -186,96 +227,86 @@ button{
 <p>Monte seu pedido online</p>
 </div>
 
-<!-- Pizza antes dos dados do cliente -->
 <div class="card">
-<h2>🍕 Escolha sua Pizza</h2>
-<div class="grid grid-2">
-  <div>
-    <label for="tamanho">Tamanho</label>
-    <select id="tamanho">
-      <option value="grande">Grande 35cm</option>
-      <option value="brotinho">Brotinho 25cm</option>
-    </select>
+  <h2>🍕 Escolha sua Pizza</h2>
+  <div class="grid grid-2">
+    <div>
+      <label for="tamanho">Tamanho</label>
+      <select id="tamanho">
+        <option value="grande">Grande 35cm</option>
+        <option value="brotinho">Brotinho 25cm</option>
+      </select>
+    </div>
+    <div>
+      <label for="tipoPizza">Tipo</label>
+      <select id="tipoPizza">
+        <option value="inteira">Inteira</option>
+        <option value="meio">Meio a Meio</option>
+      </select>
+    </div>
   </div>
-  <div>
-    <label for="tipoPizza">Tipo</label>
-    <select id="tipoPizza">
-      <option value="inteira">Inteira</option>
-      <option value="meio">Meio a Meio</option>
-    </select>
-  </div>
-</div>
-
-<div class="grid grid-2" style="margin-top: 12px;">
-  <div>
+  <div style="margin-top: 12px;">
     <label for="sabor1">Sabor 1</label>
-    <select id="sabor1"></select>
+    <div class="custom-select-container" id="customSabor1"></div>
   </div>
-  <div id="boxSabor2" style="display:none;">
+  <div id="boxSabor2" style="display:none; margin-top: 20px;">
     <label for="sabor2">Sabor 2 (Meio a Meio)</label>
-    <select id="sabor2"></select>
+    <div class="custom-select-container" id="customSabor2"></div>
   </div>
+  <div id="ingredientes"></div>
+  <button id="btnAdicionarPizza" class="btn" style="margin-top:15px;">Adicionar Pizza ao Carrinho</button>
 </div>
 
-<div id="ingredientes" style="margin-top:12px; font-size: 0.9rem; color: var(--muted);"></div>
-
-<div class="extra-list">
-  <label for="listaAdicionais">➕ Escolher Adicionais</label>
-  <select id="listaAdicionais" multiple></select>
-</div>
-
-<button id="btnAdicionarPizza" class="btn" style="margin-top:15px;">Adicionar Pizza ao Carrinho</button>
-</div>
-
-<!-- Dados do cliente -->
 <div class="card">
-<h2>👤 Dados do Cliente</h2>
-<label>Nome</label>
-<input id="nome" />
-<label>Telefone</label>
-<input id="telefone" />
-<label>CEP</label>
-<input id="cep" maxlength="9" placeholder="Digite seu CEP" />
-<label>Rua</label>
-<input id="rua" placeholder="Rua" />
-<label>Número</label>
-<input id="numero" placeholder="Número" />
-<label>Bairro</label>
-<input id="bairro" placeholder="Bairro" />
-<label>Observação</label>
-<textarea id="observacao"></textarea>
+  <h2>🥤 Bebidas</h2>
+  <select id="bebida">
+    <option value="">Nenhuma</option>
+    <option value="16">Coca-Cola 2L - R$ 16,00</option>
+    <option value="10">Guaraná 1L - R$ 10,00</option>
+    <option value="6">Coca-Cola Lata 310ml - R$ 6,00</option>
+  </select>
+  <button id="btnAdicionarBebida" class="btn" style="margin-top:12px;">Adicionar Bebida ao Carrinho</button>
 </div>
 
-<!-- Bebidas -->
 <div class="card">
-<h2>🥤 Bebidas</h2>
-<select id="bebida">
-  <option value="">Nenhuma</option>
-  <option value="16">Coca-Cola 2L - R$ 16,00</option>
-  <option value="10">Guaraná 1L - R$ 10,00</option>
-  <option value="6">Coca-Cola Lata 310ml - R$ 6,00</option>
-</select>
-<button id="btnAdicionarBebida" class="btn" style="margin-top:12px;">Adicionar Bebida ao Carrinho</button>
+  <h2>👤 Dados do Cliente</h2>
+  <label>Nome</label>
+  <input id="nome" />
+  <label>Telefone</label>
+  <input id="telefone" />
+  <label>CEP</label>
+  <input id="cep" maxlength="9" placeholder="Digite seu CEP" />
+  <label>Rua</label>
+  <input id="rua" placeholder="Rua" />
+  <label>Número</label>
+  <input id="numero" placeholder="Número" />
+  <label>Bairro</label>
+  <input id="bairro" placeholder="Bairro" />
+  <label>Observação</label>
+  <textarea id="observacao"></textarea>
 </div>
 
-<!-- Carrinho -->
 <div class="card">
-<h2>🛒 Carrinho</h2>
-<div id="carrinho">
-  <div class="item-carrinho">Nenhum item adicionado.</div>
+  <h2>➕ Adicionais</h2>
+  <select multiple id="listaAdicionais" class="extra-list"></select>
 </div>
-<div class="total">R$ 0,00</div>
-<div id="taxaEntregaArea" class="entrega-taxa"></div>
+
+<div class="card">
+  <h2>🛒 Carrinho</h2>
+  <div id="carrinho">
+    <div class="item-carrinho">Nenhum item adicionado.</div>
+  </div>
+  <div class="total">R$ 0,00</div>
+  <div id="taxaEntregaArea" class="entrega-taxa"></div>
 </div>
 
 <div class="rodape">
-  Siga a gente no Instagram <a href="https://instagram.com/kingventura-pizzaria" target="_blank" rel="noopener">@kingventura-pizzaria</a>
+  Siga a gente no Instagram <a href="https://instagram.com/kingventurapizzaria" target="_blank" rel="noopener">@kingventurapizzaria</a>
 </div>
 
 <div class="rodape">
-<button id="btnFinalizarPedido" class="btn">📦 Finalizar Pedido</button>
+  <button id="btnFinalizarPedido" class="btn">📦 Finalizar Pedido</button>
 </div>
-
 </div>
 
 <script>
@@ -303,12 +334,13 @@ function atualizarTaxaEntrega() {
   const taxaArea = document.getElementById("taxaEntregaArea");
   if (!cep || !bairro) {
     taxaArea.innerText = "";
+    atualizarCarrinho(); // atualiza total também
     return;
   }
   const distanciaKm = calcularDistanciaSimulada(cep, bairro);
   const taxa = calcularTaxaEntrega(distanciaKm, bairro);
   taxaArea.innerText = taxa == 0 ? "🎉 Você ganhou entrega grátis!" : `Taxa de entrega: R$ ${taxa}`;
-  atualizarCarrinho(); 
+  atualizarCarrinho();
 }
 async function buscarPorCep() {
   const cepInput = document.getElementById("cep");
@@ -323,7 +355,7 @@ async function buscarPorCep() {
     atualizarTaxaEntrega();
   } catch {}
 }
-let timerBuscaRua = null;
+let timerBuscaRua;
 async function buscarCepPelaRua() {
   clearTimeout(timerBuscaRua);
   timerBuscaRua = setTimeout(async () => {
@@ -352,6 +384,7 @@ async function buscarCepPelaRua() {
     } catch {}
   }, 600);
 }
+// Dados sabores e ingredientes
 const SABORES = {
   "Muçarela": { brotinho: 15, grande: 35, ingredientes: ["Molho", "Muçarela", "Azeitonas", "Orégano"] },
   "Calabresa": { brotinho: 20, grande: 35, ingredientes: ["Molho", "Muçarela", "Calabresa", "Cebola", "Azeitonas", "Orégano"] },
@@ -377,228 +410,291 @@ const ADICIONAIS = [
   { nome: "Bacon Extra", valor: 5 }
 ];
 let carrinho = [];
-function montarListaAdicionais() {
-  const container = document.getElementById("listaAdicionais");
-  container.innerHTML = "";
-  ADICIONAIS.forEach(({nome, valor}) => {
-    const option = document.createElement("option");
-    option.value = valor;
+
+// Função para criar o seletor customizado para sabores
+function criarSelectCustom(idContainer, maisDeUm=false) {
+  const container = document.getElementById(idContainer);
+  container.innerHTML = '';
+  const selectBox = document.createElement('div');
+  selectBox.className = 'custom-select';
+  selectBox.tabIndex = 0;
+  selectBox.textContent = "Selecione um sabor";
+  const optionsList = document.createElement('div');
+  optionsList.className = 'custom-options';
+
+  Object.entries(SABORES).forEach(([nome, dados]) => {
+    const option = document.createElement('div');
+    option.className = 'custom-option';
+    option.dataset.valorBrotinho = dados.brotinho;
+    option.dataset.valorGrande = dados.grande;
     option.dataset.nome = nome;
-    option.textContent = `${nome} (+R$ ${valor.toFixed(2)})`;
-    container.appendChild(option);
+    option.dataset.ingredientes = dados.ingredientes.join(", ");
+    option.innerHTML = `<span class="nome">${nome}</span> <span class="preco">R$ ${dados.grande.toFixed(2)}</span><br/><span class="ingredientes">${dados.ingredientes.join(", ")}</span>`;
+
+    option.addEventListener('click', () => {
+      selecionadores[idContainer] = { nome, dados };
+      selectBox.textContent = `${nome} - R$ ${(document.getElementById('tamanho').value === 'brotinho' ? dados.brotinho : dados.grande).toFixed(2)}`;
+      fecharDropdowns();
+      atualizarIngredientesPreviewCustom();
+      carregarSabores(); 
+      atualizarTiposPizza();
+    });
+    optionsList.appendChild(option);
   });
-}
-function carregarSabores() {
-  const tamanho = document.getElementById("tamanho").value;
-  const sabor1 = document.getElementById("sabor1");
-  const sabor2 = document.getElementById("sabor2");
-  const tipoPizza = document.getElementById("tipoPizza");
-  const selecionado1 = sabor1.value;
-  const selecionado2 = sabor2.value;
-  sabor1.innerHTML = `<option value="">Selecione um sabor</option>`;
-  sabor2.innerHTML = `<option value="">Selecione um sabor</option>`;
-  Object.keys(SABORES).forEach(nome => {
-    const preco = tamanho === "brotinho" ? SABORES[nome].brotinho : SABORES[nome].grande;
-    const ingredientes = SABORES[nome].ingredientes.join(", ");
-    sabor1.insertAdjacentHTML("beforeend", `<option value="${nome}" title="${ingredientes}">${nome} - R$ ${preco.toFixed(2)}</option>`);
-    sabor2.insertAdjacentHTML("beforeend", `<option value="${nome}" title="${ingredientes}">${nome} - R$ ${preco.toFixed(2)}</option>`);
+  selectBox.addEventListener('click', () => {
+    if(optionsList.classList.contains('active')) {
+      fecharDropdowns();
+    } else {
+      fecharDropdowns();
+      optionsList.classList.add('active');
+    }
   });
-  sabor1.value = selecionado1 && SABORES[selecionado1] ? selecionado1 : "";
-  sabor2.value = selecionado2 && SABORES[selecionado2] ? selecionado2 : "";
-  if(tamanho === "brotinho") {
-    tipoPizza.value = "inteira";
-    tipoPizza.disabled = true;
-    document.getElementById("boxSabor2").style.display = "none";
-  } else {
-    tipoPizza.disabled = false;
-    document.getElementById("boxSabor2").style.display = tipoPizza.value === "meio" ? "block" : "none";
-  }
-  atualizarIngredientesPreview();
+  container.appendChild(selectBox);
+  container.appendChild(optionsList);
 }
-function atualizarIngredientesPreview() {
-  const tamanho = document.getElementById("tamanho").value;
-  const tipo = document.getElementById("tipoPizza").value;
-  const s1 = document.getElementById("sabor1").value;
-  const s2 = document.getElementById("sabor2").value;
-  const el = document.getElementById("ingredientes");
-  if(!s1 || !SABORES[s1]) {
-    el.innerText = "";
+
+// Fecha todos dropdowns
+function fecharDropdowns() {
+  document.querySelectorAll('.custom-options').forEach(el => el.classList.remove('active'));
+}
+
+const selecionadores = { customSabor1: null, customSabor2: null };
+
+// Atualiza ingredientes na área dedicaca na seleção customizada
+function atualizarIngredientesPreviewCustom() {
+  const el = document.getElementById('ingredientes');
+  const tamanho = document.getElementById('tamanho').value;
+  const tipo = document.getElementById('tipoPizza').value;
+
+  const s1 = selecionadores.customSabor1;
+  const s2 = selecionadores.customSabor2;
+
+  if(!s1) {
+    el.innerText = '';
     return;
   }
-  if(tamanho === "grande" && tipo === "meio" && s2 && SABORES[s2]) {
-    el.innerText = `Ingredientes — 50% ${s1}: ${SABORES[s1].ingredientes.join(", ")} | 50% ${s2}: ${SABORES[s2].ingredientes.join(", ")}`;
+  if(tamanho === 'grande' && tipo === 'meio' && s2) {
+    el.innerText = `Ingredientes — 50% ${s1.nome}: ${s1.dados.ingredientes.join(', ')} | 50% ${s2.nome}: ${s2.dados.ingredientes.join(', ')}`;
   } else {
-    el.innerText = `Ingredientes: ${SABORES[s1].ingredientes.join(", ")}`;
+    el.innerText = `Ingredientes: ${s1.dados.ingredientes.join(', ')}`;
   }
 }
-function atualizarCarrinho() {
-  const container = document.getElementById("carrinho");
-  const totalEl = document.querySelector(".total");
-  if (carrinho.length === 0) {
-    container.innerHTML = `<div class="item-carrinho">Nenhum item adicionado.</div>`;
-    totalEl.innerText = "R$ 0,00";
-    atualizarTaxaEntrega(); 
+
+// Atualiza controles quando tipo ou tamanho mudam
+function atualizarTiposPizza() {
+  const tamanho = document.getElementById('tamanho').value;
+  const tipo = document.getElementById('tipoPizza');
+  const boxSabor2 = document.getElementById('boxSabor2');
+  if(tamanho === 'brotinho') {
+    tipo.value = 'inteira';
+    tipo.disabled = true;
+    boxSabor2.style.display = 'none';
+  } else {
+    tipo.disabled = false;
+    boxSabor2.style.display = tipo.value === 'meio' ? 'block' : 'none';
+  }
+}
+
+// Adiciona pizza carrinho
+document.getElementById('btnAdicionarPizza').addEventListener('click', () => {
+  const tamanho = document.getElementById('tamanho').value;
+  const tipo = document.getElementById('tipoPizza').value;
+  if(!selecionadores.customSabor1) {
+    alert('Selecione o sabor 1');
     return;
   }
-  container.innerHTML = carrinho.map((item, idx) => `
+  if(tamanho === 'brotinho' && tipo !== 'inteira') {
+    alert('Brotinho aceita somente pizza inteira');
+    return;
+  }
+  if(tipo === 'meio' && !selecionadores.customSabor2) {
+    alert('Selecione o sabor 2 para pizza meio a meio');
+    return;
+  }
+
+  let descricao = '';
+  let valor = 0;
+  let ingredientes = '';
+
+  if(tamanho === 'brotinho') {
+    descricao = `Brotinho 25cm - ${selecionadores.customSabor1.nome}`;
+    valor = selecionadores.customSabor1.dados.brotinho;
+    ingredientes = selecionadores.customSabor1.dados.ingredientes.join(', ');
+  } else if(tipo === 'meio') {
+    descricao = `Grande 35cm Meio a Meio - ${selecionadores.customSabor1.nome} / ${selecionadores.customSabor2.nome}`;
+    valor = Math.max(selecionadores.customSabor1.dados.grande, selecionadores.customSabor2.dados.grande);
+    ingredientes = `50% ${selecionadores.customSabor1.nome}: ${selecionadores.customSabor1.dados.ingredientes.join(', ')} | 50% ${selecionadores.customSabor2.nome}: ${selecionadores.customSabor2.dados.ingredientes.join(', ')}`;
+  } else {
+    descricao = `Grande 35cm - ${selecionadores.customSabor1.nome}`;
+    valor = selecionadores.customSabor1.dados.grande;
+    ingredientes = selecionadores.customSabor1.dados.ingredientes.join(', ');
+  }
+
+  const selecionadosAdicionais = Array.from(document.getElementById('listaAdicionais').selectedOptions).map(opt => ({
+    nome: opt.dataset.nome,
+    valor: Number(opt.value)
+  }));
+  const valorAdicional = selecionadosAdicionais.reduce((acc, curr) => acc + curr.valor, 0);
+  const nomesAdicionais = selecionadosAdicionais.map(a => a.nome);
+
+  if(nomesAdicionais.length > 0){
+    descricao += ' + ' + nomesAdicionais.join(', ');
+  }
+  valor += valorAdicional;
+
+  carrinho.push({
+    tipo: 'pizza',
+    descricao,
+    ingredientes,
+    observacao: '',
+    valor
+  });
+
+  atualizarCarrinho();
+  selecionadores.customSabor1 = null;
+  selecionadores.customSabor2 = null;
+  document.getElementById('listaAdicionais').selectedIndex = -1;
+  document.getElementById('ingredientes').innerText = '';
+  atualizarContadorAdicionais();
+  atualizarCustomSelectPlaceholder();
+  alert('Pizza adicionada ao carrinho!');
+});
+
+// Bebidas
+document.getElementById('btnAdicionarBebida').addEventListener('click', () => {
+  const sel = document.getElementById('bebida');
+  if(!sel.value) {
+    alert('Selecione uma bebida.');
+    return;
+  }
+  const descricao = sel.options[sel.selectedIndex].text.split(' - ')[0];
+  const valor = Number(sel.value);
+  carrinho.push({
+    tipo:'bebida',
+    descricao,
+    ingredientes: '',
+    observacao: '',
+    valor
+  });
+  atualizarCarrinho();
+  sel.value = '';
+  alert('Bebida adicionada ao carrinho!');
+});
+
+// Atualizar placeholder select custom
+function atualizarCustomSelectPlaceholder(){
+  document.querySelectorAll('.custom-select').forEach(cs => {
+    if(!cs.textContent || cs.textContent==='') cs.textContent = 'Selecione um sabor';
+  });
+}
+// Atualiza contador selecionados adicionais
+function atualizarContadorAdicionais(){
+  const selec = document.getElementById('listaAdicionais');
+  const count = selec.selectedOptions.length;
+  document.getElementById('contadorAdicionais').textContent = count > 0 ? count : '';
+}
+
+function atualizarCarrinho(){
+  const container = document.getElementById('carrinho');
+  const totalEl = document.querySelector('.total');
+  if(carrinho.length===0){
+    container.innerHTML = '<div class="item-carrinho">Nenhum item adicionado.</div>';
+    totalEl.innerText = 'R$ 0,00';
+    atualizarTaxaEntrega();
+    return;
+  }
+  container.innerHTML = carrinho.map((item, idx)=>`
     <div class="item-carrinho">
       <b>${item.descricao}</b><br/>
-      ${item.ingredientes ? `<span style="color: var(--muted); font-size: 0.85rem;">${item.ingredientes}</span><br/>` : ""}
-      ${item.observacao ? `<span style="color: var(--azul); font-size: 0.85rem;">Obs: ${item.observacao}</span><br/>` : ""}
+      ${item.ingredientes?`<span style="color: var(--muted); font-size: 0.85rem;">${item.ingredientes}</span><br/>`:''}
+      ${item.observacao?`<span style="color: var(--azul); font-size: 0.85rem;">Obs: ${item.observacao}</span><br/>`:''}
       <div style="margin-top:6px; display:flex; justify-content:space-between; align-items:center;">
         <strong>R$ ${item.valor.toFixed(2)}</strong>
         <button type="button" onclick="removerItem(${idx})" style="background:#ce2b37; border:none; border-radius:6px; color:#fff; cursor:pointer; padding:4px 8px;">Excluir</button>
       </div>
     </div>
-  `).join("");
-  const subtotal = carrinho.reduce((a, i) => a + i.valor, 0);
-  const cep = document.getElementById("cep").value;
-  const bairro = document.getElementById("bairro").value;
+  `).join('');
+  const subtotal = carrinho.reduce((acc, i)=> acc + i.valor, 0);
+  const cep = document.getElementById('cep').value;
+  const bairro = document.getElementById('bairro').value;
   const distanciaKm = calcularDistanciaSimulada(cep, bairro);
   const taxa = Number(calcularTaxaEntrega(distanciaKm, bairro));
   const total = subtotal + taxa;
-  totalEl.innerText = "R$ " + total.toFixed(2);
-  atualizarTaxaEntrega(); 
+  totalEl.innerText = 'R$ '+total.toFixed(2);
+  atualizarTaxaEntrega();
 }
-function removerItem(idx) {
+
+function removerItem(idx){
   carrinho.splice(idx, 1);
   atualizarCarrinho();
 }
-document.getElementById("btnAdicionarPizza").addEventListener("click", () => {
-  const tamanho = document.getElementById("tamanho").value;
-  const tipo = document.getElementById("tipoPizza").value;
-  const sabor1 = document.getElementById("sabor1").value;
-  const sabor2 = document.getElementById("sabor2").value;
-  if (!sabor1 || !SABORES[sabor1]) {
-    alert("Escolha o sabor 1.");
+
+// Botão para fechar dropdown ao clicar fora
+document.addEventListener('click', (e)=>{
+  if(!e.target.closest('.custom-select-container')){
+    document.querySelectorAll('.custom-options').forEach(opt => opt.classList.remove('active'));
+  }
+});
+
+document.getElementById('tamanho').addEventListener('change', () => {
+  criarSelectCustom('customSabor1');
+  criarSelectCustom('customSabor2');
+  atualizarTiposPizza();
+  atualizarIngredientesPreviewCustom();
+});
+document.getElementById('tipoPizza').addEventListener('change', () => {
+  atualizarTiposPizza();
+  atualizarIngredientesPreviewCustom();
+});
+document.getElementById('btnFinalizarPedido').addEventListener('click',()=>{
+  if(carrinho.length===0){
+    alert('Adicione itens ao carrinho antes de finalizar');
     return;
   }
-  if (tamanho === "brotinho" && tipo !== "inteira") {
-    alert("Brotinho só aceita pizza inteira.");
-    return;
-  }
-  if (tipo === "meio" && (!sabor2 || !SABORES[sabor2])) {
-    alert("Escolha o sabor 2 para pizza meio a meio.");
-    return;
-  }
-  let descricao = "";
-  let valor = 0;
-  let ingredientes = "";
-  if (tamanho === "brotinho") {
-    descricao = `Brotinho 25cm - ${sabor1}`;
-    valor = SABORES[sabor1].brotinho;
-    ingredientes = SABORES[sabor1].ingredientes.join(", ");
-  } else if (tipo === "meio") {
-    descricao = `Grande 35cm Meio a Meio - ${sabor1} / ${sabor2}`;
-    valor = Math.max(SABORES[sabor1].grande, SABORES[sabor2].grande);
-    ingredientes = `50% ${sabor1}: ${SABORES[sabor1].ingredientes.join(", ")} | 50% ${sabor2}: ${SABORES[sabor2].ingredientes.join(", ")}`;
-  } else {
-    descricao = `Grande 35cm - ${sabor1}`;
-    valor = SABORES[sabor1].grande;
-    ingredientes = SABORES[sabor1].ingredientes.join(", ");
-  }
-  const selecionados = Array.from(document.getElementById("listaAdicionais").selectedOptions).map(opt => ({
-    nome: opt.dataset.nome,
-    valor: Number(opt.value)
-  }));
-  const valorAdicional = selecionados.reduce((acc, a) => acc + a.valor, 0);
-  const nomesAdicionais = selecionados.map(a => a.nome);
-  if (nomesAdicionais.length) {
-    descricao += " + " + nomesAdicionais.join(", ");
-  }
-  valor += valorAdicional;
-  carrinho.push({
-    tipo: "pizza",
-    descricao,
-    ingredientes,
-    observacao: "",
-    valor
+  const nome = document.getElementById('nome').value.trim();
+  const telefone = document.getElementById('telefone').value.trim();
+  const cep = document.getElementById('cep').value.trim();
+  const rua = document.getElementById('rua').value.trim();
+  const numero = document.getElementById('numero').value.trim();
+  const bairro = document.getElementById('bairro').value.trim();
+  const observacao = document.getElementById('observacao').value.trim();
+  const distanciaKm = calcularDistanciaSimulada(cep, bairro);
+  const taxaEntrega = calcularTaxaEntrega(distanciaKm, bairro);
+  let texto = "KING VENTURA PIZZARIA\n\nCliente: "+nome+
+  "\nTelefone: "+telefone+
+  "\nEndereço: "+rua+" nº "+numero+", "+bairro+
+  "\nCEP: "+cep+
+  "\nObservação: "+observacao+"\n\nITENS DO PEDIDO:\n";
+  carrinho.forEach((item,i)=>{
+    texto += (i+1)+". "+item.descricao+" - R$ "+item.valor.toFixed(2)+"\n";
+    if(item.ingredientes) texto+="   Ingredientes: "+item.ingredientes+"\n";
+    if(item.observacao) texto+="   Obs: "+item.observacao+"\n";
   });
-  atualizarCarrinho();
-  Array.from(document.getElementById("listaAdicionais").options).forEach(opt => opt.selected = false);
-  atualizarContadorAdicionais();
-  alert("Pizza adicionada ao carrinho!");
+  texto+="\nTaxa de Entrega: R$ "+taxaEntrega+"\n";
+  const total=carrinho.reduce((a,i)=>a+i.valor,0)+Number(taxaEntrega);
+  texto+="TOTAL: R$ "+total.toFixed(2);
+  const numWhats = "5567991476156";
+  window.open("https://wa.me/"+numWhats+"?text="+encodeURIComponent(texto),"_blank");
 });
-document.getElementById("btnAdicionarBebida").addEventListener("click", () => {
-  const sel = document.getElementById("bebida");
-  if (!sel.value) {
-    alert("Selecione uma bebida.");
-    return;
-  }
-  const descricao = sel.options[sel.selectedIndex].text.split(" - ")[0];
-  const valor = Number(sel.value);
-  carrinho.push({
-    tipo: "bebida",
-    descricao,
-    ingredientes: "",
-    observacao: "",
-    valor
-  });
-  atualizarCarrinho();
-  alert("Bebida adicionada ao carrinho!");
-  sel.value = "";
-});
-document.getElementById("tamanho").addEventListener("change", carregarSabores);
-document.getElementById("tipoPizza").addEventListener("change", () => {
-  carregarSabores();
-  document.getElementById("boxSabor2").style.display = document.getElementById("tipoPizza").value === "meio" ? "block" : "none";
-});
-document.getElementById("sabor1").addEventListener("change", atualizarIngredientesPreview);
-document.getElementById("sabor2").addEventListener("change", atualizarIngredientesPreview);
-document.getElementById("cep").addEventListener("input", () => {
-  if (document.getElementById("cep").value.replace(/\D/g, '').length === 8) {
+
+// Preenchimento automático CEP e rua
+document.getElementById('cep').addEventListener('input',()=>{
+  if(document.getElementById('cep').value.replace(/\D/g,'').length===8){
     buscarPorCep();
   }
 });
-document.getElementById("rua").addEventListener("input", () => buscarCepPelaRua());
-document.getElementById("bairro").addEventListener("input", atualizarTaxaEntrega);
-document.getElementById("numero").addEventListener("input", atualizarTaxaEntrega);
+document.getElementById('rua').addEventListener('input',buscarCepPelaRua);
+document.getElementById('bairro').addEventListener('input',atualizarTaxaEntrega);
+document.getElementById('numero').addEventListener('input',atualizarTaxaEntrega);
+
+// Inicializações
 montarListaAdicionais();
-carregarSabores();
+criarSelectCustom('customSabor1');
+criarSelectCustom('customSabor2');
+atualizarTiposPizza();
 atualizarTaxaEntrega();
 atualizarContadorAdicionais();
-function atualizarContadorAdicionais() {
-  const selecionados = document.getElementById("listaAdicionais").selectedOptions.length;
-  const contador = document.getElementById("contadorAdicionais");
-  contador.textContent = selecionados > 0 ? selecionados : "";
-}
-function montarTextoPedido() {
-  const nome = document.getElementById("nome").value.trim();
-  const telefone = document.getElementById("telefone").value.trim();
-  const cep = document.getElementById("cep").value.trim();
-  const rua = document.getElementById("rua").value.trim();
-  const numero = document.getElementById("numero").value.trim();
-  const bairro = document.getElementById("bairro").value.trim();
-  const observacao = document.getElementById("observacao").value.trim();
-  const distanciaKm = calcularDistanciaSimulada(cep, bairro);
-  const taxaEntrega = calcularTaxaEntrega(distanciaKm, bairro);
-  let texto = "KING VENTURA PIZZARIA\n\n";
-  texto += `Cliente: ${nome}\n`;
-  texto += `Telefone: ${telefone}\n`;
-  texto += `Endereço: ${rua} nº ${numero}, ${bairro}\n`;
-  texto += `CEP: ${cep}\n`;
-  texto += `Observação: ${observacao}\n\n`;
-  texto += "ITENS DO PEDIDO:\n";
-  carrinho.forEach((item, i) => {
-    texto += `${i+1}. ${item.descricao} - R$ ${item.valor.toFixed(2)}\n`;
-    if (item.ingredientes) texto += `   Ingredientes: ${item.ingredientes}\n`;
-    if(item.observacao) texto += `   Obs: ${item.observacao}\n`;
-  });
-  texto += `\nTaxa de Entrega: R$ ${taxaEntrega}\n`;
-  const total = carrinho.reduce((acc, item) => acc + item.valor, 0) + Number(taxaEntrega);
-  texto += `TOTAL: R$ ${total.toFixed(2)}\n`;
-  return texto;
-}
-document.getElementById("btnFinalizarPedido").addEventListener("click", () => {
-  if (carrinho.length === 0) {
-    alert("Adicione algum item ao carrinho antes de finalizar.");
-    return;
-  }
-  const texto = montarTextoPedido();
-  const numeroWhats = "5567991476156";
-  const url = "https://wa.me/" + numeroWhats + "?text=" + encodeURIComponent(texto);
-  window.open(url, "_blank");
-});
+
 </script>
 </body>
 </html>
