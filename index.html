@@ -95,86 +95,148 @@ button{
   min-height: 40px;
 }
 
-/* Custom styled select options for ingredients */
-select option {
-  padding: 6px 8px;
+/* Custom dropdown for selects */
+.custom-select-container {
+  position: relative;
+  user-select: none;
+  margin-top: 6px;
 }
-
-select option span {
-  display: block;
-  font-size: 0.75rem;
-  color: var(--muted);
-}
-
-/* Styles to show ingredients in options */
-select.opt-sabores option::after {
-  content: attr(data-ingredientes);
-  display: block;
-  font-size: 0.75rem;
-  color: var(--muted);
-  margin-top: 4px;
-}
-
-.extra-list select {
-  min-height: 140px;
-  padding: 12px;
-  font-size: 0.9rem;
+.custom-select {
   background: var(--card2);
-  color: var(--texto);
   border: 1px solid var(--border);
   border-radius: 10px;
+  padding: 12px;
+  color: var(--texto);
   cursor: pointer;
+  position: relative;
+}
+.custom-select::after {
+  content: "▼";
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.7rem;
+  color: var(--muted);
+  pointer-events: none;
+}
+.custom-options {
+  position: absolute;
+  background: var(--card2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  width: 100%;
+  max-height: 160px;
+  overflow-y: auto;
+  margin-top: 4px;
+  z-index: 100;
+  display: none;
+}
+.custom-options.active {
+  display: block;
+}
+.custom-option {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  color: var(--texto);
+}
+.custom-option:last-child {
+  border-bottom: none;
+}
+.custom-option:hover, .custom-option.selected {
+  background: var(--azul);
+  color: white;
+}
+.custom-option .nome {
+  font-weight: bold;
+  display: inline-block;
+}
+.custom-option .preco {
+  float: right;
+  color: #77a2ee;
+}
+.custom-option .ingredientes {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-top: 6px;
+  clear: both;
+  display: block;
+}
+.multi-select-selected {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-#carrinho{
-  margin-top:10px;
+/* Multi select dropdown for adicionais */
+.multi-select-container{
+  position: relative;
+  user-select: none;
+  margin-top: 6px;
 }
-.item-carrinho{
-  background:var(--card2);
-  padding:10px;
-  border-radius:10px;
-  margin-bottom:8px;
-}
-.total{
-  font-size:24px;
-  font-weight:bold;
-  color:var(--azul);
-  text-align:right;
-  margin-top:10px;
-}
-.entrega-taxa {
-  color: var(--azul);
-  font-weight: 700;
-  margin-top: 10px;
-}
-.rodape{
-  position:sticky;
-  bottom:0;
-  background:var(--card);
-  padding:15px;
-  border-radius:15px;
+.multi-select {
+  background: var(--card2);
   border:1px solid var(--border);
-  margin-top:20px;
-  text-align:center;
-  font-weight: 600;
-  font-size: 0.95rem;
+  border-radius:10px;
+  padding:12px;
+  color: var(--texto);
+  cursor: pointer;
+  position: relative;
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
-.rodape a {
-  color: var(--azul);
-  text-decoration: none;
+.multi-select::after {
+  content: "▼";
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.7rem;
+  color: var(--muted);
+  pointer-events: none;
 }
-.rodape a:hover {
-  text-decoration: underline;
+.multi-options{
+  position: absolute;
+  background: var(--card2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  width: 100%;
+  max-height: 140px;
+  overflow-y: auto;
+  margin-top: 4px;
+  z-index: 100;
+  display: none;
 }
-@media(max-width:700px){
-.logo h1{
-  font-size:26px;
+.multi-options.active {
+  display: block;
 }
+.multi-option{
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  color: var(--texto);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.multi-option:last-child {
+  border-bottom: none;
+}
+.multi-option input[type="checkbox"]{
+  cursor: pointer;
+}
+.multi-option:hover {
+  background: var(--azul);
+  color: white;
 }
 </style>
 </head>
 <body>
 <div class="container">
+
 <div class="logo" style="text-align:center;">
 <h1>👑 KING VENTURA</h1>
 <div style="display:flex; justify-content:center; align-items:center; gap:6px; margin:10px auto;">
@@ -206,17 +268,17 @@ select.opt-sabores option::after {
   <div class="grid grid-2" style="margin-top: 12px;">
     <div>
       <label for="sabor1">Sabor 1</label>
-      <select id="sabor1" class="opt-sabores"></select>
+      <div id="customSabor1" class="custom-select-container"></div>
     </div>
     <div id="boxSabor2" style="display:none;">
       <label for="sabor2">Sabor 2 (Meio a Meio)</label>
-      <select id="sabor2" class="opt-sabores"></select>
+      <div id="customSabor2" class="custom-select-container"></div>
     </div>
   </div>
   <div id="ingredientes"></div>
   <div style="margin-top:15px;">
     <label for="listaAdicionais">➕ Escolher Adicionais</label>
-    <select multiple id="listaAdicionais"></select>
+    <div id="customAdicionais" class="multi-select-container"></div>
   </div>
   <button id="btnAdicionarPizza" class="btn" style="margin-top:15px;">Adicionar Pizza ao Carrinho</button>
 </div>
@@ -271,7 +333,7 @@ select.opt-sabores option::after {
 <script>
 const bairrosGratisAté3Km = ["jardim tarumã","copavilã","pendigo","nova laguna","laranjeiras"];
 function textoLimpo(texto){
-  return texto.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  return texto.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
 }
 function calcularTaxaEntrega(distanciaKm,bairro){
   const bairroLimpo=textoLimpo(bairro);
@@ -345,129 +407,108 @@ async function buscarCepPelaRua(){
     catch{}
   },600);
 }
-const SABORES={
-  "Muçarela":{brotinho:15,grande:35,ingredientes:["Molho","Muçarela","Azeitonas","Orégano"]},
-  "Calabresa":{brotinho:20,grande:35,ingredientes:["Molho","Muçarela","Calabresa","Cebola","Azeitonas","Orégano"]},
-  "Catupiry":{brotinho:20,grande:35,ingredientes:["Molho","Muçarela","Catupiry","Azeitonas","Orégano"]},
-  "Calabresa com Catupiry":{brotinho:20,grande:40,ingredientes:["Molho","Muçarela","Calabresa","Catupiry","Azeitonas","Orégano"]},
-  "Frango com Catupiry":{brotinho:20,grande:40,ingredientes:["Molho","Muçarela","Frango Desfiado","Catupiry","Azeitonas","Orégano"]},
-  "Presunto":{brotinho:20,grande:35,ingredientes:["Molho","Muçarela","Presunto","Cebola","Azeitonas","Orégano"]},
-  "Presunto com Catupiry":{brotinho:20,grande:40,ingredientes:["Molho","Muçarela","Presunto","Catupiry","Azeitonas","Orégano"]},
-  "Brasileira":{brotinho:20,grande:40,ingredientes:["Molho","Muçarela","Milho Verde","Ervilha","Cebola","Azeitonas","Orégano"]},
-  "Frango com Milho e Tomate":{brotinho:20,grande:40,ingredientes:["Molho","Muçarela","Frango Desfiado","Milho Verde","Tomate","Azeitonas","Orégano"]},
-  "Baiana":{brotinho:23,grande:40,ingredientes:["Molho","Muçarela","Calabresa","Bacon","Molho de Pimenta","Cebola","Azeitonas","Orégano"]},
-  "Bacon":{brotinho:23,grande:40,ingredientes:["Molho","Muçarela","Bacon","Cebola","Azeitonas","Orégano"]},
-  "Cremosa":{brotinho:23,grande:40,ingredientes:["Molho","Muçarela","Catupiry","Creme de Leite","Azeitonas","Orégano"]},
-  "Lombo ao Creme":{brotinho:23,grande:40,ingredientes:["Molho","Muçarela","Lombinho","Creme de Leite","Azeitonas","Orégano"]}
+
+// Dados sabores
+const SABORES = {
+  "Muçarela": { brotinho: 15, grande: 35, ingredientes: ["molho", "muçarela", "azeitonas", "orégano"] },
+  "Calabresa": { brotinho: 20, grande: 35, ingredientes: ["molho", "muçarela", "calabresa", "cebola", "azeitonas", "orégano"] },
+  "Catupiry": { brotinho: 20, grande: 35, ingredientes: ["molho", "muçarela", "catupiry", "azeitonas", "orégano"] },
+  "Calabresa com Catupiry": { brotinho: 20, grande: 40, ingredientes: ["molho", "muçarela", "calabresa", "catupiry", "azeitonas", "orégano"] },
+  "Frango com Catupiry": { brotinho: 20, grande: 40, ingredientes: ["molho", "muçarela", "frango desfiado", "catupiry", "azeitonas", "orégano"] },
+  "Presunto": { brotinho: 20, grande: 35, ingredientes: ["molho", "muçarela", "presunto", "cebola", "azeitonas", "orégano"] },
+  "Presunto com Catupiry": { brotinho: 20, grande: 40, ingredientes: ["molho", "muçarela", "presunto", "catupiry", "azeitonas", "orégano"] },
+  "Brasileira": { brotinho: 20, grande: 40, ingredientes: ["molho", "muçarela", "milho verde", "ervilha", "cebola", "azeitonas", "orégano"] },
+  "Frango com Milho e Tomate": { brotinho: 20, grande: 40, ingredientes: ["molho", "muçarela", "frango desfiado", "milho verde", "tomate", "azeitonas", "orégano"] },
+  "Baiana": { brotinho: 23, grande: 40, ingredientes: ["molho", "muçarela", "calabresa", "bacon", "molho de pimenta", "cebola", "azeitonas", "orégano"] },
+  "Bacon": { brotinho: 23, grande: 40, ingredientes: ["molho", "muçarela", "bacon", "cebola", "azeitonas", "orégano"] },
+  "Cremosa": { brotinho: 23, grande: 40, ingredientes: ["molho", "muçarela", "catupiry", "creme de leite", "azeitonas", "orégano"] },
+  "Lombo ao Creme": { brotinho: 23, grande: 40, ingredientes: ["molho", "muçarela", "lombinho", "creme de leite", "azeitonas", "orégano"] }
 };
+// Adicionais
 const ADICIONAIS=[
-  {nome:"Catupiry Extra",valor:4},
-  {nome:"Presunto Extra",valor:4},
-  {nome:"Cebola Extra",valor:4},
-  {nome:"Milho Extra",valor:4},
-  {nome:"Ervilha Extra",valor:4},
-  {nome:"Muçarela Extra",valor:5},
-  {nome:"Bacon Extra",valor:5}
+  { nome: "Catupiry Extra", valor: 4 },
+  { nome: "Presunto Extra", valor: 4 },
+  { nome: "Cebola Extra", valor: 4 },
+  { nome: "Milho Extra", valor: 4 },
+  { nome: "Ervilha Extra", valor:4 },
+  { nome: "Muçarela Extra", valor: 5 },
+  { nome: "Bacon Extra", valor: 5 }
 ];
-function carregarSabores() {
-  const tamanho=document.getElementById("tamanho").value;
-  const sabor1=document.getElementById("sabor1");
-  const sabor2=document.getElementById("sabor2");
-  const tipo=document.getElementById("tipoPizza");
+let carrinho = [];
 
-  const prev1=sabor1.value;
-  const prev2=sabor2.value;
+function formarListaIngredientes(ingredientes){
+  if(ingredientes.length <=1) return ingredientes.join("");
+  return ingredientes.slice(0, ingredientes.length-1).join(", ") + " e " + ingredientes[ingredientes.length-1];
+}
 
-  sabor1.innerHTML='<option value="">Selecione um sabor</option>';
-  sabor2.innerHTML='<option value="">Selecione um sabor</option>';
-
-  Object.keys(SABORES).forEach(nome=>{
-    let preco = tamanho==='brotinho' ? SABORES[nome].brotinho : SABORES[nome].grande;
-    let ing=SABORES[nome].ingredientes.join(", ");
-    let txt=`${nome} - R$ ${preco.toFixed(2)} (${ing})`;
-    sabor1.innerHTML+=`<option value="${nome}" title="${ing}">${txt}</option>`;
-    sabor2.innerHTML+=`<option value="${nome}" title="${ing}">${txt}</option>`;
-  });
-
-  sabor1.value=prev1 && SABORES[prev1] ? prev1 : "";
-  sabor2.value=prev2 && SABORES[prev2] ? prev2 : "";
-
-  if(tamanho==='brotinho'){
-    tipo.value='inteira';
-    tipo.disabled=true;
-    document.getElementById("boxSabor2").style.display='none';
-  }else{
-    tipo.disabled=false;
-    document.getElementById("boxSabor2").style.display = tipo.value === 'meio' ? 'block' : 'none';
+function renderizarSelectSabores(selectId){
+  const select = document.getElementById(selectId);
+  const tamanho = document.getElementById("tamanho").value;
+  select.innerHTML = '<option value="">Selecione um sabor</option>';
+  for(const [nome, dados] of Object.entries(SABORES)){
+    let preco = tamanho === "brotinho" ? dados.brotinho : dados.grande;
+    let ingredientesFormatados = formarListaIngredientes(dados.ingredientes);
+    select.innerHTML += `<option value="${nome}" title="${ingredientesFormatados}">${nome} - R$ ${preco.toFixed(2)} | (${ingredientesFormatados})</option>`;
   }
-  atualizarIngredientesPreview();
+}
+
+function renderizarListaAdicionais(){
+  const container = document.getElementById("listaAdicionais");
+  container.innerHTML = "";
+  ADICIONAIS.forEach(({nome, valor})=>{
+    const div = document.createElement("div");
+    div.className = "extra-item";
+    div.innerHTML = `<label><input type="checkbox" data-nome="${nome}" value="${valor}"> ${nome} (+R$ ${valor.toFixed(2)})</label>`;
+    container.appendChild(div);
+  });
 }
 
 function atualizarIngredientesPreview(){
-  const tamanho=document.getElementById("tamanho").value;
-  const tipo=document.getElementById("tipoPizza").value;
-  const s1=document.getElementById("sabor1").value;
-  const s2=document.getElementById("sabor2").value;
-  const el=document.getElementById("ingredientes");
-  if(!s1 || !SABORES[s1]){
-    el.innerText="";
+  const sabor1 = document.getElementById("sabor1").value;
+  const sabor2 = document.getElementById("sabor2").value;
+  const tamanho = document.getElementById("tamanho").value;
+  const tipo = document.getElementById("tipoPizza").value;
+  const ingredientesEl = document.getElementById("ingredientes");
+  if(!sabor1 || !SABORES[sabor1]){
+    ingredientesEl.textContent = "";
     return;
   }
-  if(tamanho==='grande' && tipo==='meio' && s2 && SABORES[s2]){
-    el.innerText=`Ingredientes - 50% ${s1}: ${SABORES[s1].ingredientes.join(", ")} | 50% ${s2}: ${SABORES[s2].ingredientes.join(", ")}`;
-  }else{
-    el.innerText=`Ingredientes: ${SABORES[s1].ingredientes.join(", ")}`;
+  if(tamanho === "grande" && tipo === "meio" && sabor2 && SABORES[sabor2]){
+    ingredientesEl.textContent = `Ingredientes – 50% ${sabor1}: ${formarListaIngredientes(SABORES[sabor1].ingredientes)} | 50% ${sabor2}: ${formarListaIngredientes(SABORES[sabor2].ingredientes)}`;
+  } else{
+    ingredientesEl.textContent = `Ingredientes: ${formarListaIngredientes(SABORES[sabor1].ingredientes)}`;
   }
-}
-
-function montarListaAdicionais(){
-  const container=document.getElementById("listaAdicionais");
-  container.innerHTML="";
-  ADICIONAIS.forEach(({nome, valor})=>{
-    const label=document.createElement("label");
-    label.className="extra-item";
-    label.innerHTML=`<input type="checkbox" data-nome="${nome}" value="${valor}"/> ${nome} (+R$ ${valor.toFixed(2)})`;
-    container.appendChild(label);
-  });
-  container.querySelectorAll("input[type=checkbox]").forEach(inp=>inp.addEventListener("change", ()=>{
-    atualizarContadorAdicionais();
-  }));
-}
-
-function atualizarContadorAdicionais(){
-  const selecionados=document.querySelectorAll("#listaAdicionais input[type=checkbox]:checked").length;
-  const contador=document.getElementById("contadorAdicionais");
-  if(contador) contador.textContent=selecionados>0 ? selecionados : "";
 }
 
 function atualizarCarrinho(){
-  const container=document.getElementById("carrinho");
-  const totalEl=document.querySelector(".total");
-  const taxaEl=document.getElementById("taxaEntregaArea");
-  if(carrinho.length===0){
-    container.innerHTML='<div class="item-carrinho">Nenhum item adicionado.</div>';
-    totalEl.innerText="R$ 0,00";
-    taxaEl.innerText="";
+  const container = document.getElementById("carrinho");
+  const totalEl = document.querySelector(".total");
+  const taxaEl = document.getElementById("taxaEntregaArea");
+  if(carrinho.length ===0){
+    container.innerHTML = "<div class='item-carrinho'>Nenhum item adicionado.</div>";
+    totalEl.textContent = "R$ 0,00";
+    taxaEl.textContent = "";
     return;
   }
-  container.innerHTML=carrinho.map((item,i)=>`
+  container.innerHTML = carrinho.map((item, i)=>`
     <div class="item-carrinho">
       <b>${item.descricao}</b><br/>
-      ${item.ingredientes ? `<span style="color: var(--muted); font-size: 0.85rem;">${item.ingredientes}</span><br/>` : ""}
-      ${item.observacao ? `<span style="color: var(--azul);font-size: 0.85rem;">Obs: ${item.observacao}</span><br/>` : ""}
+      ${item.ingredientes ? `<span style="color: var(--muted); font-size: 0.85rem;">${item.ingredientes}</span><br/>`: ""}
+      ${item.observacao ? `<span style="color: var(--azul); font-size: 0.85rem;">Obs: ${item.observacao}</span><br/>`: ""}
       <div style="margin-top:6px; display:flex; justify-content:space-between; align-items:center;">
         <strong>R$ ${item.valor.toFixed(2)}</strong>
-        <button onclick="removerItem(${i})" type="button" style="background:#ce2b37; border:none; border-radius:6px; color:#fff; cursor:pointer; padding:4px 8px;">Excluir</button>
+        <button type="button" onclick="removerItem(${i})" style="background:#ce2b37; border:none; border-radius:6px; color:#fff; cursor:pointer; padding:4px 8px;">Excluir</button>
       </div>
-    </div>`).join("");
-  const subtotal = carrinho.reduce((a,c)=>a+c.valor, 0);
-  const cep=document.getElementById("cep").value;
-  const bairro=document.getElementById("bairro").value;
-  const distanciaKm=calcularDistanciaSimulada(cep, bairro);
-  const taxa=Number(calcularTaxaEntrega(distanciaKm,bairro));
-  const total=subtotal+taxa;
-  totalEl.innerText=`R$ ${total.toFixed(2)}`;
-  taxaEl.innerText=taxa==0 ? "🎉 Você ganhou entrega grátis!":`Taxa de entrega: R$ ${taxa.toFixed(2)}`;
+    </div>
+  `).join("");
+  const subtotal = carrinho.reduce((a, i)=> a+i.valor,0);
+  const cep = document.getElementById("cep").value;
+  const bairro = document.getElementById("bairro").value;
+  const distanciaKm = calcularDistanciaSimulada(cep,bairro);
+  const taxa = Number(calcularTaxaEntrega(distanciaKm,bairro));
+  const total = subtotal + taxa;
+  totalEl.textContent = `R$ ${total.toFixed(2)}`;
+  taxaEl.textContent = taxa === 0 ? "🎉 Você ganhou entrega grátis!" : `Taxa de entrega: R$ ${taxa.toFixed(2)}`;
 }
 
 function removerItem(idx){
@@ -476,111 +517,112 @@ function removerItem(idx){
 }
 
 document.getElementById("btnAdicionarPizza").addEventListener("click",()=>{
-  const tamanho=document.getElementById("tamanho").value;
-  const tipo=document.getElementById("tipoPizza").value;
-  const sabor1=document.getElementById("sabor1").value;
-  const sabor2=document.getElementById("sabor2").value;
-
+  const tamanho = document.getElementById("tamanho").value;
+  const tipo = document.getElementById("tipoPizza").value;
+  const sabor1 = document.getElementById("sabor1").value;
+  const sabor2 = document.getElementById("sabor2").value;
   if(!sabor1 || !SABORES[sabor1]){
-    alert("Escolha o sabor 1.");
+    alert("Selecione o sabor 1.");
     return;
   }
-  if(tamanho==="brotinho" && tipo!=="inteira"){
+  if(tamanho === "brotinho" && tipo !== "inteira"){
     alert("Brotinho só aceita pizza inteira.");
     return;
   }
-  if(tipo==="meio" && (!sabor2 || !SABORES[sabor2])){
-    alert("Escolha o sabor 2 para pizza meio a meio.");
+  if(tipo === "meio" && (!sabor2 || !SABORES[sabor2])){
+    alert("Selecione o sabor 2 para pizza meio a meio.");
     return;
   }
-  let descricao="", valor=0, ingredientes="";
-  if(tamanho==="brotinho"){
-    descricao=`Brotinho 25cm - ${sabor1}`;
-    valor=SABORES[sabor1].brotinho;
-    ingredientes=SABORES[sabor1].ingredientes.join(", ");
-  } else if(tipo==="meio"){
-    descricao=`Grande 35cm Meio a Meio - ${sabor1} / ${sabor2}`;
-    valor=Math.max(SABORES[sabor1].grande, SABORES[sabor2].grande);
-    ingredientes=`50% ${sabor1}: ${SABORES[sabor1].ingredientes.join(", ")} | 50% ${sabor2}: ${SABORES[sabor2].ingredientes.join(", ")}`;
-  } else {
-    descricao=`Grande 35cm - ${sabor1}`;
-    valor=SABORES[sabor1].grande;
-    ingredientes=SABORES[sabor1].ingredientes.join(", ");
+  let descricao = "";
+  let valor = 0;
+  let ingredientes = "";
+  if(tamanho === "brotinho"){
+    descricao = `Brotinho 25cm - ${sabor1}`;
+    valor = SABORES[sabor1].brotinho;
+    ingredientes = SABORES[sabor1].ingredientes.join(", ");
+  }else if(tipo === "meio"){
+    descricao = `Grande 35cm Meio a Meio - ${sabor1} / ${sabor2}`;
+    valor = Math.max(SABORES[sabor1].grande, SABORES[sabor2].grande);
+    ingredientes = `50% ${sabor1}: ${SABORES[sabor1].ingredientes.join(", ")} | 50% ${sabor2}: ${SABORES[sabor2].ingredientes.join(", ")}`;
+  }else{
+    descricao = `Grande 35cm - ${sabor1}`;
+    valor = SABORES[sabor1].grande;
+    ingredientes = SABORES[sabor1].ingredientes.join(", ");
   }
-  const adicionaisSelecionados=Array.from(document.querySelectorAll("#listaAdicionais input[type=checkbox]:checked"))
+  const adicionaisSelecionados = Array.from(document.querySelectorAll("#listaAdicionais input[type=checkbox]:checked"))
     .map(i=>({nome:i.dataset.nome, valor:Number(i.value)}));
-  const valorAdc=adicionaisSelecionados.reduce((a,v)=>a+v.valor,0);
-  const nomesAdc=adicionaisSelecionados.map(a=>a.nome);
-  if(nomesAdc.length) descricao+=" + "+nomesAdc.join(", ");
-  valor+=valorAdc;
-  carrinho.push({tipo:"pizza",descricao,ingredientes,observacao:"",valor});
+  const valorAdicionais = adicionaisSelecionados.reduce((a,v) => a+v.valor,0);
+  const nomesAdicionais = adicionaisSelecionados.map(a => a.nome);
+  if(nomesAdicionais.length) descricao += " + "+nomesAdicionais.join(", ");
+  valor += valorAdicionais;
+  carrinho.push({tipo:"pizza", descricao, ingredientes, observacao:"", valor});
   atualizarCarrinho();
-  document.querySelectorAll("#listaAdicionais input[type=checkbox]").forEach(i=>i.checked=false);
-  atualizarContadorAdicionais();
+  // limpa adicionais
+  document.querySelectorAll("#listaAdicionais input:checked").forEach(i=>i.checked=false);
   alert("Pizza adicionada ao carrinho!");
 });
 
-document.getElementById("btnAdicionarBebida").addEventListener("click",()=> {
-  const sel=document.getElementById("bebida");
+document.getElementById("btnAdicionarBebida").addEventListener("click",()=>{
+  const sel = document.getElementById("bebida");
   if(!sel.value){
     alert("Selecione uma bebida.");
     return;
   }
-  const descricao=sel.options[sel.selectedIndex].text.split(" - ")[0];
-  const valor=Number(sel.value);
-  carrinho.push({tipo:"bebida",descricao,ingredientes:"",observacao:"",valor});
+  const descricao = sel.options[sel.selectedIndex].text.split(" - ")[0];
+  const valor = Number(sel.value);
+  carrinho.push({tipo:"bebida", descricao, ingredientes:"", observacao:"", valor});
   atualizarCarrinho();
   alert("Bebida adicionada ao carrinho!");
-  sel.value="";
+  sel.value = "";
 });
 
 document.getElementById("tamanho").addEventListener("change",()=>{
   carregarSabores();
-  const tipo=document.getElementById("tipoPizza");
-  const box=document.getElementById("boxSabor2");
-  if(document.getElementById("tamanho").value==="brotinho"){
-    tipo.value="inteira";
-    tipo.disabled=true;
-    box.style.display="none";
-  } else {
-    tipo.disabled=false;
-    box.style.display=tipo.value==="meio" ? "block" : "none";
+  const tipo = document.getElementById("tipoPizza");
+  const box = document.getElementById("boxSabor2");
+  if(document.getElementById("tamanho").value === "brotinho"){
+    tipo.value = "inteira";
+    tipo.disabled = true;
+    box.style.display = "none";
+  }else{
+    tipo.disabled = false;
+    box.style.display = tipo.value === "meio" ? "block" : "none";
   }
 });
 document.getElementById("tipoPizza").addEventListener("change",()=>{
   carregarSabores();
-  const box=document.getElementById("boxSabor2");
-  box.style.display=document.getElementById("tipoPizza").value==="meio" ? "block" : "none";
+  const box = document.getElementById("boxSabor2");
+  box.style.display = document.getElementById("tipoPizza").value === "meio" ? "block" : "none";
   atualizarIngredientesPreview();
 });
 document.getElementById("sabor1").addEventListener("change",atualizarIngredientesPreview);
 document.getElementById("sabor2").addEventListener("change",atualizarIngredientesPreview);
 document.getElementById("cep").addEventListener("input",()=>{
-  if(document.getElementById("cep").value.replace(/\D/g,'').length===8) buscarPorCep();
+  if(document.getElementById("cep").value.replace(/\D/g,"").length === 8) buscarPorCep();
 });
-document.getElementById("rua").addEventListener("input",buscarCepPelaRua);
+document.getElementById("rua").addEventListener("input", buscarCepPelaRua);
 document.getElementById("bairro").addEventListener("input",atualizarTaxaEntrega);
 document.getElementById("numero").addEventListener("input",atualizarTaxaEntrega);
+
 carregarSabores();
 montarListaAdicionais();
 atualizarTaxaEntrega();
-atualizarContadorAdicionais();
 
 document.getElementById("btnFinalizarPedido").addEventListener("click",()=>{
-  if(carrinho.length===0){
+  if(carrinho.length === 0){
     alert("Adicione itens ao carrinho antes de finalizar.");
     return;
   }
-  let nome=document.getElementById("nome").value.trim();
-  let telefone=document.getElementById("telefone").value.trim();
-  let cep=document.getElementById("cep").value.trim();
-  let rua=document.getElementById("rua").value.trim();
-  let numero=document.getElementById("numero").value.trim();
-  let bairro=document.getElementById("bairro").value.trim();
-  let obs=document.getElementById("observacao").value.trim();
-  let distanciaKm=calcularDistanciaSimulada(cep,bairro);
-  let taxaEntrega=calcularTaxaEntrega(distanciaKm,bairro);
-  let texto="KING VENTURA PIZZARIA\n\nCliente: "+nome+
+  let nome = document.getElementById("nome").value.trim();
+  let telefone = document.getElementById("telefone").value.trim();
+  let cep = document.getElementById("cep").value.trim();
+  let rua = document.getElementById("rua").value.trim();
+  let numero = document.getElementById("numero").value.trim();
+  let bairro = document.getElementById("bairro").value.trim();
+  let obs = document.getElementById("observacao").value.trim();
+  let distanciaKm = calcularDistanciaSimulada(cep,bairro);
+  let taxaEntrega = calcularTaxaEntrega(distanciaKm,bairro);
+  let texto = "KING VENTURA PIZZARIA\n\nCliente: "+nome+
   "\nTelefone: "+telefone+
   "\nEndereço: "+rua+" nº "+numero+", "+bairro+
   "\nCEP: "+cep+
@@ -592,9 +634,9 @@ document.getElementById("btnFinalizarPedido").addEventListener("click",()=>{
     if(item.observacao) texto+="   Obs: "+item.observacao+"\n";
   });
   texto+="\nTaxa de Entrega: R$ "+taxaEntrega+"\n";
-  let total=carrinho.reduce((a,v)=>a+v.valor,0)+Number(taxaEntrega);
+  let total = carrinho.reduce((a,v)=> a+v.valor,0) + Number(taxaEntrega);
   texto+="TOTAL: R$ "+total.toFixed(2);
-  let numWhats="5567991476156";
+  let numWhats = "5567991476156";
   window.open("https://wa.me/"+numWhats+"?text="+encodeURIComponent(texto),"_blank");
 });
 </script>
