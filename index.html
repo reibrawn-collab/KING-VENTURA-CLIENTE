@@ -7,72 +7,193 @@
 <title>King Ventura Cliente</title>
 
 <style>
-body{
+
+:root{
+  --bg:#05080f;
+  --card:#0b1526;
+  --card2:#132241;
+  --border:#1e3560;
+  --azul:#4a90e2;
+  --texto:#ffffff;
+  --muted:#9fb4d6;
+}
+
+*{
   margin:0;
-  padding:15px;
-  background:#05080f;
-  color:#fff;
+  padding:0;
+  box-sizing:border-box;
   font-family:Arial,sans-serif;
 }
 
+body{
+  background:var(--bg);
+  color:var(--texto);
+  padding:15px;
+}
+
 .container{
-  max-width:800px;
+  max-width:900px;
   margin:auto;
 }
 
+.logo{
+  text-align:center;
+  margin-bottom:20px;
+}
+
+.logo h1{
+  color:var(--azul);
+  font-size:32px;
+}
+
+.logo p{
+  color:var(--muted);
+}
+
 .card{
-  background:#0b1526;
-  border:1px solid #1e3560;
-  border-radius:12px;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:15px;
   padding:15px;
   margin-bottom:15px;
 }
 
-h1,h2{
-  color:#4a90e2;
+.card h2{
+  color:var(--azul);
+  margin-bottom:15px;
 }
 
 input,
 select,
 textarea{
   width:100%;
-  padding:10px;
-  border-radius:8px;
-  border:1px solid #1e3560;
-  background:#132241;
+  background:var(--card2);
   color:white;
-  box-sizing:border-box;
-  margin-top:5px;
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:12px;
+  margin-top:8px;
+}
+
+label{
+  display:block;
+  margin-top:10px;
+  color:var(--muted);
+}
+
+.grid{
+  display:grid;
+  gap:12px;
+}
+
+.grid-2{
+  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
 }
 
 button{
-  width:100%;
-  padding:12px;
-  border:none;
-  border-radius:8px;
-  background:#1b4f9c;
-  color:white;
-  font-weight:bold;
   cursor:pointer;
+  border:none;
 }
 
-button:hover{
-  opacity:0.9;
+.btn{
+  background:var(--azul);
+  color:white;
+  padding:12px;
+  border-radius:10px;
+  width:100%;
+  font-weight:bold;
 }
 
-.item{
-  background:#132241;
-  padding:10px;
+.btn:hover{
+  opacity:.9;
+}
+
+.sabores-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:12px;
+}
+
+.sabor-card{
+  background:var(--card2);
+  border:2px solid transparent;
+  border-radius:12px;
+  padding:15px;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.sabor-card:hover{
+  border-color:var(--azul);
+}
+
+.sabor-card.selected{
+  border-color:var(--azul);
+  box-shadow:0 0 10px rgba(74,144,226,.4);
+}
+
+.sabor-nome{
+  font-size:18px;
+  font-weight:bold;
+}
+
+.sabor-preco{
+  color:var(--azul);
   margin-top:8px;
-  border-radius:8px;
+}
+
+.extra{
+  display:inline-block;
+  padding:10px 14px;
+  border-radius:20px;
+  background:var(--card2);
+  border:1px solid var(--border);
+  cursor:pointer;
+  margin:5px;
+}
+
+.extra.active{
+  background:var(--azul);
+  color:white;
+}
+
+#carrinho{
+  margin-top:10px;
+}
+
+.item-carrinho{
+  background:var(--card2);
+  padding:10px;
+  border-radius:10px;
+  margin-bottom:8px;
 }
 
 .total{
-  font-size:22px;
+  font-size:24px;
   font-weight:bold;
-  color:#4a90e2;
+  color:var(--azul);
   text-align:right;
+  margin-top:10px;
 }
+
+.rodape{
+  position:sticky;
+  bottom:0;
+  background:var(--card);
+  padding:15px;
+  border-radius:15px;
+  border:1px solid var(--border);
+  margin-top:20px;
+}
+
+@media(max-width:700px){
+
+.logo h1{
+  font-size:26px;
+}
+
+}
+
 </style>
 </head>
 
@@ -80,65 +201,97 @@ button:hover{
 
 <div class="container">
 
-<div class="card">
-<h1>🍕 KING VENTURA PIZZARIA</h1>
-<p>Monte seu pedido</p>
+<div class="logo">
+<h1>🍕 KING VENTURA</h1>
+<p>Monte seu pedido online</p>
 </div>
 
 <div class="card">
+
 <h2>👤 Dados do Cliente</h2>
 
-<input id="nome" placeholder="Nome">
+<label>Nome</label>
+<input id="nome">
 
-<br><br>
+<label>Telefone</label>
+<input id="telefone">
 
-<input id="telefone" placeholder="Telefone">
+<label>Endereço</label>
+<input id="endereco">
 
-<br><br>
+<label>Observação</label>
+<textarea id="observacao"></textarea>
 
-<input id="endereco" placeholder="Endereço">
-
-<br><br>
-
-<textarea id="observacao" placeholder="Observação"></textarea>
 </div>
 
 <div class="card">
-<h2>🍕 Pizza</h2>
 
+<h2>🍕 Escolha sua Pizza</h2>
+
+<div class="grid grid-2">
+
+<div>
+<label>Tamanho</label>
 <select id="tamanho">
-<option>Brotinho 25cm</option>
-<option>Grande 35cm</option>
+<option value="35">Grande 35cm</option>
+<option value="25">Brotinho 25cm</option>
 </select>
+</div>
 
-<br><br>
-
-<select id="tipoPizza">
-<option>Inteira</option>
-<option>Meio a Meio</option>
+<div>
+<label>Tipo</label>
+<select id="tipo">
+<option value="inteira">Inteira</option>
+<option value="meio">Meio a Meio</option>
 </select>
+</div>
 
-<br><br>
+</div>
 
-<select id="sabor1">
-<option>Calabresa</option>
-<option>Muçarela</option>
-<option>Frango com Catupiry</option>
-<option>Bacon</option>
-</select>
+<br>
 
-<br><br>
+<div class="sabores-grid">
 
-<button type="button">
-➕ Escolher Adicionais
-</button>
+<div class="sabor-card">
+<div class="sabor-nome">Calabresa</div>
+<div class="sabor-preco">R$ 35,00</div>
+</div>
+
+<div class="sabor-card">
+<div class="sabor-nome">Muçarela</div>
+<div class="sabor-preco">R$ 35,00</div>
+</div>
+
+<div class="sabor-card">
+<div class="sabor-nome">Bacon</div>
+<div class="sabor-preco">R$ 40,00</div>
+</div>
+
+<div class="sabor-card">
+<div class="sabor-nome">Frango com Catupiry</div>
+<div class="sabor-preco">R$ 40,00</div>
+</div>
+
+</div>
 
 </div>
 
 <div class="card">
+
+<h2>➕ Adicionais</h2>
+
+<div class="extra">Bacon Extra +R$5</div>
+<div class="extra">Catupiry Extra +R$4</div>
+<div class="extra">Milho Extra +R$4</div>
+<div class="extra">Presunto Extra +R$4</div>
+
+</div>
+
+<div class="card">
+
 <h2>🥤 Bebidas</h2>
 
-<select id="bebida">
+<select>
 <option>Nenhuma</option>
 <option>Coca-Cola 2L</option>
 <option>Guaraná 1L</option>
@@ -148,22 +301,27 @@ button:hover{
 </div>
 
 <div class="card">
+
 <h2>🛒 Carrinho</h2>
 
 <div id="carrinho">
-Nenhum item adicionado
+
+<div class="item-carrinho">
+Nenhum item adicionado.
 </div>
 
-<br>
+</div>
 
 <div class="total">
 R$ 0,00
 </div>
 
-<br>
+</div>
 
-<button>
-📦 Gerar Pedido
+<div class="rodape">
+
+<button class="btn">
+📦 Finalizar Pedido
 </button>
 
 </div>
