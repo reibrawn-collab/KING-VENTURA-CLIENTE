@@ -203,15 +203,16 @@ button {
     </div>
   </div>
 
-  <div id="boxSabor2" style="margin-top: 15px; display:none;">
-    <label for="sabor2">Sabor 2 (Meio a Meio)</label>
-    <select id="sabor2" title="Selecione um sabor"></select>
-  </div>
+<div id="boxSabor2" style="margin-top: 15px; display:none;">
+  <label for="sabor2">Sabor 2 (Meio a Meio)</label>
+  <select id="sabor2" title="Selecione um sabor"></select>
+</div>
+<div style="margin-top: 15px;">
+  <label for="listaAdicionais">➕ Adicionais</label>
+  <select id="listaAdicionais" multiple size="6" style="min-height:110px;"></select>
+</div>
 
-  <div style="margin-top:15px;">
-    <label for="listaAdicionais">Adicionais</label>
-    <select id="listaAdicionais" multiple></select>
-  </div>
+
 
   <div id="ingredientes"></div>
 
@@ -364,10 +365,10 @@ function atualizarIngredientesPreview() {
   }
 }
 
-function montarListaAdicionais() {
+function montarListaAdicionais(){
   const container = document.getElementById("listaAdicionais");
   container.innerHTML = '';
-  ADICIONAIS.forEach(({ nome, valor }) => {
+  ADICIONAIS.forEach(({nome, valor})=>{
     const option = document.createElement("option");
     option.value = valor;
     option.textContent = `${nome} (+R$ ${valor.toFixed(2)})`;
@@ -455,10 +456,11 @@ document.getElementById("btnAdicionarPizza").addEventListener("click", () => {
     ingredientes = SABORES[sabor1].ingredientes.join(", ");
   }
 
-  const adicionaisSelecionados = Array.from(document.getElementById("listaAdicionais").selectedOptions).map(opt => ({
-    nome: opt.dataset.nome,
-    valor: Number(opt.value)
-  }));
+ const adicionaisSelecionados = Array.from(document.getElementById("listaAdicionais").selectedOptions).map(opt => ({
+  nome: opt.dataset.nome,
+  valor: Number(opt.value)
+}));
+
 
   const valorAdicional = adicionaisSelecionados.reduce((a, v) => a + v.valor, 0);
   const nomesAdicionais = adicionaisSelecionados.map(a => a.nome);
