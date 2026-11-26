@@ -116,25 +116,15 @@ button{
   color:var(--azul);
   margin-top:8px;
 }
-.extra-list {
-  max-height: 140px;
-  overflow-y: auto;
+.extra-list select {
+  width: 100%;
+  min-height: 120px;
   background: var(--card2);
+  color: var(--texto);
   border: 1px solid var(--border);
   border-radius: 10px;
-  padding: 10px 12px;
-  margin-top: 8px;
-  display: none;
-}
-.extra-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 6px;
-}
-.extra-item input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
+  padding: 10px;
+  font-size: 0.9rem;
   cursor: pointer;
 }
 #carrinho{
@@ -155,8 +145,8 @@ button{
 }
 .entrega-taxa {
   color: var(--azul);
-  margin-top: 8px;
-  font-weight: 600;
+  font-weight: 700;
+  margin-top: 10px;
 }
 .rodape{
   position:sticky;
@@ -166,23 +156,16 @@ button{
   border-radius:15px;
   border:1px solid var(--border);
   margin-top:20px;
-}
-.adicionais-btn-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 10px;
-  cursor: pointer;
-  user-select: none;
-  color: var(--azul);
+  text-align:center;
   font-weight: 600;
+  font-size: 0.95rem;
 }
-.adicionais-count {
-  background: var(--azul);
-  border-radius: 20px;
-  padding: 2px 10px;
-  color: white;
-  font-size: 0.85rem;
+.rodape a {
+  color: var(--azul);
+  text-decoration: none;
+}
+.rodape a:hover {
+  text-decoration: underline;
 }
 @media(max-width:700px){
 .logo h1{
@@ -203,24 +186,7 @@ button{
 <p>Monte seu pedido online</p>
 </div>
 
-<div class="card">
-<h2>👤 Dados do Cliente</h2>
-<label>Nome</label>
-<input id="nome">
-<label>Telefone</label>
-<input id="telefone">
-<label>CEP</label>
-<input id="cep" maxlength="9" placeholder="Digite seu CEP">
-<label>Rua</label>
-<input id="rua" placeholder="Rua">
-<label>Número</label>
-<input id="numero" placeholder="Número">
-<label>Bairro</label>
-<input id="bairro" placeholder="Bairro">
-<label>Observação</label>
-<textarea id="observacao"></textarea>
-</div>
-
+<!-- Pizza antes dos dados do cliente -->
 <div class="card">
 <h2>🍕 Escolha sua Pizza</h2>
 <div class="grid grid-2">
@@ -253,15 +219,34 @@ button{
 
 <div id="ingredientes" style="margin-top:12px; font-size: 0.9rem; color: var(--muted);"></div>
 
-<div class="adicionais-btn-row" id="btnMostrarAdicionais">
-  ➕ Escolher Adicionais <span class="adicionais-count" id="contadorAdicionais">0</span>
+<div class="extra-list">
+  <label for="listaAdicionais">➕ Escolher Adicionais</label>
+  <select id="listaAdicionais" multiple></select>
 </div>
-
-<div class="extra-list" id="listaAdicionais"></div>
 
 <button id="btnAdicionarPizza" class="btn" style="margin-top:15px;">Adicionar Pizza ao Carrinho</button>
 </div>
 
+<!-- Dados do cliente -->
+<div class="card">
+<h2>👤 Dados do Cliente</h2>
+<label>Nome</label>
+<input id="nome" />
+<label>Telefone</label>
+<input id="telefone" />
+<label>CEP</label>
+<input id="cep" maxlength="9" placeholder="Digite seu CEP" />
+<label>Rua</label>
+<input id="rua" placeholder="Rua" />
+<label>Número</label>
+<input id="numero" placeholder="Número" />
+<label>Bairro</label>
+<input id="bairro" placeholder="Bairro" />
+<label>Observação</label>
+<textarea id="observacao"></textarea>
+</div>
+
+<!-- Bebidas -->
 <div class="card">
 <h2>🥤 Bebidas</h2>
 <select id="bebida">
@@ -273,6 +258,7 @@ button{
 <button id="btnAdicionarBebida" class="btn" style="margin-top:12px;">Adicionar Bebida ao Carrinho</button>
 </div>
 
+<!-- Carrinho -->
 <div class="card">
 <h2>🛒 Carrinho</h2>
 <div id="carrinho">
@@ -280,6 +266,10 @@ button{
 </div>
 <div class="total">R$ 0,00</div>
 <div id="taxaEntregaArea" class="entrega-taxa"></div>
+</div>
+
+<div class="rodape">
+  Siga a gente no Instagram <a href="https://instagram.com/kingventura-pizzaria" target="_blank" rel="noopener">@kingventura-pizzaria</a>
 </div>
 
 <div class="rodape">
@@ -312,13 +302,13 @@ function atualizarTaxaEntrega() {
   const bairro = document.getElementById("bairro").value;
   const taxaArea = document.getElementById("taxaEntregaArea");
   if (!cep || !bairro) {
-    taxaArea.innerText = "Informe o CEP e o Bairro.";
+    taxaArea.innerText = "";
     return;
   }
   const distanciaKm = calcularDistanciaSimulada(cep, bairro);
   const taxa = calcularTaxaEntrega(distanciaKm, bairro);
   taxaArea.innerText = taxa == 0 ? "🎉 Você ganhou entrega grátis!" : `Taxa de entrega: R$ ${taxa}`;
-  atualizarCarrinho();
+  atualizarCarrinho(); 
 }
 async function buscarPorCep() {
   const cepInput = document.getElementById("cep");
@@ -391,28 +381,13 @@ function montarListaAdicionais() {
   const container = document.getElementById("listaAdicionais");
   container.innerHTML = "";
   ADICIONAIS.forEach(({nome, valor}) => {
-    const label = document.createElement("label");
-    label.className = "extra-item";
-    label.innerHTML = `<input type="checkbox" data-nome="${nome}" value="${valor}"> ${nome} (+R$ ${valor.toFixed(2)})`;
-    container.appendChild(label);
-  });
-  container.querySelectorAll("input[type=checkbox]").forEach(input => {
-    input.addEventListener("change", atualizarContadorAdicionais);
+    const option = document.createElement("option");
+    option.value = valor;
+    option.dataset.nome = nome;
+    option.textContent = `${nome} (+R$ ${valor.toFixed(2)})`;
+    container.appendChild(option);
   });
 }
-function atualizarContadorAdicionais() {
-  const selecionados = document.querySelectorAll("#listaAdicionais input[type=checkbox]:checked").length;
-  const contador = document.getElementById("contadorAdicionais");
-  contador.textContent = selecionados > 0 ? selecionados : "";
-}
-document.getElementById("btnMostrarAdicionais").addEventListener("click", () => {
-  const lista = document.getElementById("listaAdicionais");
-  if (lista.style.display === "block") {
-    lista.style.display = "none";
-  } else {
-    lista.style.display = "block";
-  }
-});
 function carregarSabores() {
   const tamanho = document.getElementById("tamanho").value;
   const sabor1 = document.getElementById("sabor1");
@@ -424,8 +399,9 @@ function carregarSabores() {
   sabor2.innerHTML = `<option value="">Selecione um sabor</option>`;
   Object.keys(SABORES).forEach(nome => {
     const preco = tamanho === "brotinho" ? SABORES[nome].brotinho : SABORES[nome].grande;
-    sabor1.insertAdjacentHTML("beforeend", `<option value="${nome}">${nome} - R$ ${preco.toFixed(2)}</option>`);
-    sabor2.insertAdjacentHTML("beforeend", `<option value="${nome}">${nome} - R$ ${preco.toFixed(2)}</option>`);
+    const ingredientes = SABORES[nome].ingredientes.join(", ");
+    sabor1.insertAdjacentHTML("beforeend", `<option value="${nome}" title="${ingredientes}">${nome} - R$ ${preco.toFixed(2)}</option>`);
+    sabor2.insertAdjacentHTML("beforeend", `<option value="${nome}" title="${ingredientes}">${nome} - R$ ${preco.toFixed(2)}</option>`);
   });
   sabor1.value = selecionado1 && SABORES[selecionado1] ? selecionado1 : "";
   sabor2.value = selecionado2 && SABORES[selecionado2] ? selecionado2 : "";
@@ -482,7 +458,7 @@ function atualizarCarrinho() {
   const taxa = Number(calcularTaxaEntrega(distanciaKm, bairro));
   const total = subtotal + taxa;
   totalEl.innerText = "R$ " + total.toFixed(2);
-  atualizarTaxaEntrega(); // só pra mostrar mensagem na área taxa
+  atualizarTaxaEntrega(); 
 }
 function removerItem(idx) {
   carrinho.splice(idx, 1);
@@ -521,13 +497,12 @@ document.getElementById("btnAdicionarPizza").addEventListener("click", () => {
     valor = SABORES[sabor1].grande;
     ingredientes = SABORES[sabor1].ingredientes.join(", ");
   }
-  const adicionaisSelecionados = Array.from(document.querySelectorAll("#listaAdicionais input:checked"))
-    .map(e => ({
-      nome: e.dataset.nome,
-      valor: Number(e.value)
-    }));
-  const valorAdicional = adicionaisSelecionados.reduce((acc, a) => acc + a.valor, 0);
-  const nomesAdicionais = adicionaisSelecionados.map(a => a.nome);
+  const selecionados = Array.from(document.getElementById("listaAdicionais").selectedOptions).map(opt => ({
+    nome: opt.dataset.nome,
+    valor: Number(opt.value)
+  }));
+  const valorAdicional = selecionados.reduce((acc, a) => acc + a.valor, 0);
+  const nomesAdicionais = selecionados.map(a => a.nome);
   if (nomesAdicionais.length) {
     descricao += " + " + nomesAdicionais.join(", ");
   }
@@ -540,7 +515,7 @@ document.getElementById("btnAdicionarPizza").addEventListener("click", () => {
     valor
   });
   atualizarCarrinho();
-  document.querySelectorAll("#listaAdicionais input:checked").forEach(i => i.checked = false);
+  Array.from(document.getElementById("listaAdicionais").options).forEach(opt => opt.selected = false);
   atualizarContadorAdicionais();
   alert("Pizza adicionada ao carrinho!");
 });
@@ -582,8 +557,11 @@ montarListaAdicionais();
 carregarSabores();
 atualizarTaxaEntrega();
 atualizarContadorAdicionais();
-
-// Monta mensagem do pedido para WhatsApp
+function atualizarContadorAdicionais() {
+  const selecionados = document.getElementById("listaAdicionais").selectedOptions.length;
+  const contador = document.getElementById("contadorAdicionais");
+  contador.textContent = selecionados > 0 ? selecionados : "";
+}
 function montarTextoPedido() {
   const nome = document.getElementById("nome").value.trim();
   const telefone = document.getElementById("telefone").value.trim();
@@ -594,7 +572,6 @@ function montarTextoPedido() {
   const observacao = document.getElementById("observacao").value.trim();
   const distanciaKm = calcularDistanciaSimulada(cep, bairro);
   const taxaEntrega = calcularTaxaEntrega(distanciaKm, bairro);
-
   let texto = "KING VENTURA PIZZARIA\n\n";
   texto += `Cliente: ${nome}\n`;
   texto += `Telefone: ${telefone}\n`;
@@ -602,20 +579,16 @@ function montarTextoPedido() {
   texto += `CEP: ${cep}\n`;
   texto += `Observação: ${observacao}\n\n`;
   texto += "ITENS DO PEDIDO:\n";
-
   carrinho.forEach((item, i) => {
     texto += `${i+1}. ${item.descricao} - R$ ${item.valor.toFixed(2)}\n`;
     if (item.ingredientes) texto += `   Ingredientes: ${item.ingredientes}\n`;
     if(item.observacao) texto += `   Obs: ${item.observacao}\n`;
   });
-
   texto += `\nTaxa de Entrega: R$ ${taxaEntrega}\n`;
   const total = carrinho.reduce((acc, item) => acc + item.valor, 0) + Number(taxaEntrega);
   texto += `TOTAL: R$ ${total.toFixed(2)}\n`;
   return texto;
 }
-
-// Botão finalizar pedido
 document.getElementById("btnFinalizarPedido").addEventListener("click", () => {
   if (carrinho.length === 0) {
     alert("Adicione algum item ao carrinho antes de finalizar.");
@@ -626,7 +599,6 @@ document.getElementById("btnFinalizarPedido").addEventListener("click", () => {
   const url = "https://wa.me/" + numeroWhats + "?text=" + encodeURIComponent(texto);
   window.open(url, "_blank");
 });
-
 </script>
 </body>
 </html>
