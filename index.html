@@ -16,7 +16,6 @@
     --gold-dark: #4a90e2;
     --danger-dark: #cf4638;
 
-    /* Alteração só aqui nas cores do modo claro */
     --bg-light: #f5f7fa;
     --card-light: #ffffff;
     --card2-light: #f0f3f8;
@@ -285,7 +284,6 @@
       font-size: 26px;
     }
   }
-  /* Estilo para a chave PIX quando exibida */
   #chavePix {
     margin-top: 10px;
     padding: 10px;
@@ -398,7 +396,6 @@
     <label for="observacao">Observação</label>
     <textarea id="observacao" placeholder="Ponto de referência, troco, etc."></textarea>
 
-    <!-- NOVO: Forma de pagamento -->
     <label for="formaPagamento" style="margin-top: 15px;">Forma de Pagamento</label>
     <select id="formaPagamento" aria-describedby="infoPix">
       <option value="">Selecione</option>
@@ -564,9 +561,7 @@
       </div>
     `).join("");
 
-    const total = carrinho.reduce((sum,item) => sum+item.valor, 0);
-    document.getElementById("totalPedido").textContent = `R$ ${total.toFixed(2)}`;
-    document.getElementById("taxaEntregaArea").textContent = "🎉 Você ganhou entrega grátis!";
+    atualizarTaxaEntrega();
   }
 
   function removerItem(idx) {
@@ -672,6 +667,68 @@
     alert("Bebida adicionada ao carrinho!");
   });
 
+  // Função para calcular taxa de entrega com base na distância em km
+  function calcularTaxaEntrega(distancia) {
+    if (distancia <= 3) {
+      return 0;
+    } else if (distancia <= 4) {
+      return 5;
+    } else if (distancia <= 10) {
+      return 5 + (distancia - 4);
+    } else {
+      alert("Não atendemos sua região.");
+      return null;
+    }
+  }
+
+  // Função para atualizar taxa de entrega e total do pedido
+  function atualizarTaxaEntrega() {
+    const cepDestino = document.getElementById("cep").value.replace(/\D/g, "");
+    if(cepDestino.length !== 8) {
+      document.getElementById("taxaEntregaArea").textContent = "";
+      return;
+    }
+    const geocoder = new google.maps.Geocoder();
+    geocoder.geocode({address: cepDestino}, (results, status) => {
+      if (status === "OK" && results[0]) {
+        const destino = results[0].geometry.location;
+        const origem = new google.maps.LatLng(-20.44278, -54.64639); // Rua Delamare 129 Campo Grande
+        const service = new google.maps.DistanceMatrixService();
+        service.getDistanceMatrix({
+          origins: [origem],
+          destinations: [destino],
+          travelMode: 'DRIVING',
+          unitSystem: google.maps.UnitSystem.METRIC,
+        }, (response, status) => {
+          if (status === 'OK') {
+            const element = response.rows[0].elements[0];
+            if(element.status === "OK"){
+              const distanciaKm = element.distance.value / 1000;
+              const taxa = calcularTaxaEntrega(distanciaKm);
+              if(taxa !== null){
+                const totalItens = carrinho.reduce((acc, item) => acc + item.valor, 0);
+                const total = totalItens + taxa;
+                document.getElementById("taxaEntregaArea").textContent = `Taxa de entrega: R$ ${taxa.toFixed(2)} (Distância: ${distanciaKm.toFixed(1)} km)`;
+                document.getElementById("totalPedido").textContent = `Total: R$ ${total.toFixed(2)}`;
+              } else {
+                document.getElementById("taxaEntregaArea").textContent = "Não atendemos sua região.";
+                document.getElementById("totalPedido").textContent = `Total: R$ 0,00`;
+              }
+            } else {
+              alert("Não foi possível calcular a distância para o CEP informado.");
+            }
+          } else {
+            alert("Erro ao calcular a distância.");
+          }
+        });
+      } else {
+        alert("CEP informado inválido ou não encontrado.");
+      }
+    });
+  }
+
+  document.getElementById("cep").addEventListener("blur", atualizarTaxaEntrega);
+
   document.getElementById("btnFinalizarPedido").addEventListener("click", () => {
     if(carrinho.length === 0){
       alert("Adicione pelo menos um item ao carrinho antes de finalizar.");
@@ -703,7 +760,16 @@
       if(item.observacao) texto += `Obs: ${item.observacao}\n`;
       texto += "\n";
     });
-    texto += `TOTAL: ${document.getElementById("totalPedido").textContent}\n`;
+
+    // Obtem a taxa de entrega exibida na página
+    const taxaEntregaTexto = document.getElementById("taxaEntregaArea").textContent;
+    if(taxaEntregaTexto.includes("Taxa de entrega:")){
+      const valorTaxa = parseFloat(taxaEntregaTexto.match(/\d+\,?\d*/)[0].replace(",", "."));
+      texto += `Taxa de entrega: R$ ${valorTaxa.toFixed(2)}\n`;
+    }
+
+    let totalTexto = document.getElementById("totalPedido").textContent;
+    texto += `TOTAL: ${totalTexto.replace("Total: ", "")}\n`;
 
     if(formaPagamento === "pix"){
       texto += `\nChave PIX para pagamento: 67992149584\n`;
@@ -763,6 +829,7 @@
             bairroInput.value = data.bairro || "";
             cidadeInput.value = data.localidade || "";
             estadoInput.value = data.uf || "";
+            atualizarTaxaEntrega();
           } else {
             alert("CEP não encontrado.");
           }
@@ -784,6 +851,7 @@
         .then(data => {
           if (Array.isArray(data) && data.length > 0 && !data[0].erro) {
             cepInput.value = data[0].cep || "";
+            atualizarTaxaEntrega();
           }
         })
         .catch(() => {});
@@ -809,5 +877,9 @@
     }
   });
 </script>
+
+<!-- Biblioteca Google Maps com sua chave, lembre-se de trocar pela sua! -->
+<script src="https://maps.googleapis.com/maps/api/js?key=SUA_CHAVE_API&libraries=places" async defer></script>
+
 </body>
 </html>
