@@ -78,8 +78,10 @@
     font-weight: 700;
     line-height: 1;
   }
-  .logo h1 div {
-    line-height: 1;
+  .logo h1 div:last-child {
+    margin-top: 6px;
+    font-size: 1.1rem;
+    font-weight: 600;
   }
   .logo p {
     color: var(--muted);
@@ -87,10 +89,10 @@
     margin-top: 6px;
   }
   .mode-toggle-container {
-    margin-top: 8px;
+    margin-top: 12px;
   }
   button.mode-toggle {
-    padding: 6px 16px;
+    padding: 6px 20px;
     font-weight: 600;
     font-size: 0.875rem;
     border-radius: 8px;
@@ -100,10 +102,12 @@
     cursor: pointer;
     user-select: none;
     transition: background-color 0.3s ease;
+    outline-offset: 2px;
   }
   button.mode-toggle:hover {
     background-color: #3671c6;
   }
+
   .italian-stripes {
     display: flex;
     justify-content: center;
@@ -176,7 +180,7 @@
     margin-top: 10px;
     transition: background-color 0.3s;
   }
-  button:hover {
+  button:hover, button.mode-toggle:hover {
     opacity: 0.9;
   }
   #ingredientes {
@@ -259,30 +263,6 @@
     margin-top: 10px;
     text-align: right;
   }
-  .btn-toggle-adicionais {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    cursor: pointer;
-    background: var(--card2);
-    padding: 10px 12px;
-    border-radius: 10px;
-    border: 1px solid var(--border);
-    margin-top: 6px;
-    color: var(--azul);
-    font-weight: 600;
-  }
-  .btn-toggle-adicionais:hover {
-    background: var(--azul);
-    color: white;
-  }
-  .adicional-count {
-    background: var(--azul);
-    border-radius: 20px;
-    padding: 2px 10px;
-    color: white;
-    font-size: 0.85rem;
-  }
   footer {
     text-align: center;
     margin: 20px 0;
@@ -311,7 +291,7 @@
       <h1>
         <div>KING</div>
         <div>VENTURA</div>
-        <div style="font-size: 1rem; font-weight: 500; margin-top: -6px;">PIZZARIA</div>
+        <div>PIZZARIA</div>
       </h1>
       <div class="italian-stripes">
         <div class="green"></div>
@@ -445,16 +425,6 @@
 
   let carrinho = [];
 
-  const sabor1El = document.getElementById("sabor1");
-  const sabor2El = document.getElementById("sabor2");
-  const adicionalCountEl = document.getElementById("adicionalCount");
-  const btnToggleAdicionaisEl = document.getElementById("btnToggleAdicionais");
-  const listaAdicionaisEl = document.getElementById("listaAdicionais");
-  const ingredientesEl = document.getElementById("ingredientes");
-  const carrinhoEl = document.getElementById("carrinho");
-  const totalPedidoEl = document.getElementById("totalPedido");
-  const taxaEntregaEl = document.getElementById("taxaEntregaArea");
-
   function formarListaIngredientes(ingredientes){
     if(ingredientes.length <=1) return ingredientes.join("");
     return ingredientes.slice(0, ingredientes.length-1).join(", ") + " e " + ingredientes[ingredientes.length-1];
@@ -462,32 +432,6 @@
 
   function carregarSabores() {
     const tamanho = document.getElementById("tamanho").value;
-
-    function textoSabor(nome, dados) {
-      const preco = (tamanho === "brotinho") ? dados.brotinho : dados.grande;
-      const ings = formarListaIngredientes(dados.ingredientes);
-      return `${nome} - R$ ${preco.toFixed(2)} (${ings})`;
-    }
-
-    const prev1 = sabor1El.value;
-    const prev2 = sabor2El.value;
-
-    sabor1El.innerHTML = '<option value="">Selecione um sabor</option>';
-    sabor2El.innerHTML = '<option value="">Selecione um sabor</option>';
-
-    Object.entries(SABORES).forEach(([nome, dados]) => {
-      const opt1 = document.createElement("option");
-      opt1.value = nome;
-      opt1.textContent = textoSabor(nome, dados);
-      sabor1El.appendChild(opt1);
-
-      const opt2 = opt1.cloneNode(true);
-      sabor2El.appendChild(opt2);
-    });
-
-    sabor1El.value = (prev1 && SABORES[prev1]) ? prev1 : "";
-    sabor2El.value = (prev2 && SABORES[prev2]) ? prev2 : "";
-
     const tipoPizzaEl = document.getElementById("tipoPizza");
     const boxSabor2 = document.getElementById("boxSabor2");
 
@@ -497,166 +441,163 @@
       boxSabor2.style.display = "none";
     } else {
       tipoPizzaEl.disabled = false;
-      boxSabor2.style.display = (tipoPizzaEl.value === "meio") ? "block" : "none";
+      boxSabor2.style.display = tipoPizzaEl.value === "meio" ? "block" : "none";
     }
+
+    const sabor1El = document.getElementById("sabor1");
+    const sabor2El = document.getElementById("sabor2");
+    const prev1 = sabor1El.value;
+    const prev2 = sabor2El.value;
+
+    sabor1El.innerHTML = '<option value="">Selecione um sabor</option>';
+    sabor2El.innerHTML = '<option value="">Selecione um sabor</option>';
+
+    Object.entries(SABORES).forEach(([nome, dados]) => {
+      const preco = tamanho==="brotinho"?dados.brotinho:dados.grande;
+      const ings = formarListaIngredientes(dados.ingredientes);
+      const texto = `${nome} - R$ ${preco.toFixed(2)} (${ings})`;
+      sabor1El.innerHTML += `<option value="${nome}">${texto}</option>`;
+      sabor2El.innerHTML += `<option value="${nome}">${texto}</option>`;
+    });
+
+    sabor1El.value = prev1 && SABORES[prev1]?prev1:"";
+    sabor2El.value = prev2 && SABORES[prev2]?prev2:"";
+
     atualizarPreviewIngredientes();
   }
 
   function atualizarPreviewIngredientes() {
+    const s1 = document.getElementById("sabor1").value;
+    const s2 = document.getElementById("sabor2").value;
     const tamanho = document.getElementById("tamanho").value;
     const tipo = document.getElementById("tipoPizza").value;
-    const s1 = sabor1El.value;
-    const s2 = sabor2El.value;
+    const el = document.getElementById("ingredientes");
 
     if(!s1 || !SABORES[s1]){
-      ingredientesEl.innerText = "";
+      el.innerText = "";
       return;
     }
 
-    if(tamanho === "grande" && tipo === "meio" && s2 && SABORES[s2]){
-      ingredientesEl.innerText = `Ingredientes — 50% ${s1}: ${formarListaIngredientes(SABORES[s1].ingredientes)} | 50% ${s2}: ${formarListaIngredientes(SABORES[s2].ingredientes)}`;
+    if(tamanho==="grande" && tipo==="meio" && s2 && SABORES[s2]){
+      el.innerText = `Ingredientes — 50% ${s1}: ${formarListaIngredientes(SABORES[s1].ingredientes)} | 50% ${s2}: ${formarListaIngredientes(SABORES[s2].ingredientes)}`;
     } else {
-      ingredientesEl.innerText = `Ingredientes: ${formarListaIngredientes(SABORES[s1].ingredientes)}`;
+      el.innerText = `Ingredientes: ${formarListaIngredientes(SABORES[s1].ingredientes)}`;
     }
   }
 
   function montarListaAdicionais() {
-    listaAdicionaisEl.innerHTML = "";
-    ADICIONAIS.forEach(({nome, valor})=>{
+    const container = document.getElementById("listaAdicionais");
+    container.innerHTML = "";
+    ADICIONAIS.forEach(({nome, valor}) => {
       const label = document.createElement("label");
       label.classList.add("extra-item");
       label.innerHTML = `<input type="checkbox" value="${valor}" data-nome="${nome}"> ${nome} (+R$ ${valor.toFixed(2)})`;
-      listaAdicionaisEl.appendChild(label);
+      container.appendChild(label);
     });
   }
 
   function atualizarTextoAdicionais() {
-    const marcados = listaAdicionaisEl.querySelectorAll("input[type=checkbox]:checked");
+    const marcados = document.querySelectorAll("#listaAdicionais input:checked");
     const qtd = marcados.length;
-    adicionalCountEl.innerText = qtd;
-    if (qtd === 0) {
-      btnToggleAdicionaisEl.innerText = "➕ Adicionais ";
-      btnToggleAdicionaisEl.appendChild(adicionalCountEl);
+    const btn = document.getElementById("btnToggleAdicionais");
+    const count = document.getElementById("adicionalCount");
+    count.textContent = qtd;
+    if(qtd === 0){
+      btn.textContent = "➕ Adicionais ";
+      btn.appendChild(count);
     } else {
-      btnToggleAdicionaisEl.innerText = `➕ Adicionais (${qtd}) `;
-      btnToggleAdicionaisEl.appendChild(adicionalCountEl);
+      btn.textContent = `➕ Adicionais (${qtd}) `;
+      btn.appendChild(count);
     }
   }
 
   function atualizarCarrinho() {
-    if (carrinho.length === 0) {
-      carrinhoEl.innerHTML = '<div class="item-carrinho">Nenhum item adicionado.</div>';
-      totalPedidoEl.innerText = "R$ 0,00";
-      taxaEntregaEl.innerText = "";
+    const container = document.getElementById("carrinho");
+    if(carrinho.length === 0){
+      container.innerHTML = '<div class="item-carrinho">Nenhum item adicionado.</div>';
+      document.getElementById("totalPedido").textContent = "R$ 0,00";
+      document.getElementById("taxaEntregaArea").textContent = "";
       return;
     }
-    carrinhoEl.innerHTML = carrinho.map((item,i) => {
-      return `<div class="item-carrinho">
+
+    container.innerHTML = carrinho.map((item, idx) => `
+      <div class="item-carrinho">
         <div>
           <b>${item.descricao}</b>
           ${item.ingredientes ? `<div style="font-style: italic; color: var(--muted); font-size: 0.9rem;">${item.ingredientes}</div>` : ""}
           ${item.observacao ? `<div style="color: var(--azul); font-size: 0.9rem;">Obs: ${item.observacao}</div>` : ""}
         </div>
-        <button type="button" onclick="removerItem(${i})" aria-label="Remover item do carrinho">Excluir</button>
-      </div>`;
-    }).join("");
+        <button type="button" onclick="removerItem(${idx})" aria-label="Remover item do carrinho">Excluir</button>
+      </div>
+    `).join("");
 
-    const subtotal = carrinho.reduce((acc,v) => acc + v.valor, 0);
-    const taxaEntrega = 0;
-    taxaEntregaEl.innerText = taxaEntrega === 0 ? "🎉 Você ganhou entrega grátis!" : `Taxa de entrega: R$ ${taxaEntrega.toFixed(2)}`;
-    totalPedidoEl.innerText = `R$ ${(subtotal + taxaEntrega).toFixed(2)}`;
+    const total = carrinho.reduce((sum,item) => sum+item.valor, 0);
+    document.getElementById("totalPedido").textContent = `R$ ${total.toFixed(2)}`;
+    document.getElementById("taxaEntregaArea").textContent = "🎉 Você ganhou entrega grátis!";
   }
 
   function removerItem(idx) {
-    if(idx >= 0 && idx < carrinho.length){
-      carrinho.splice(idx,1);
-      atualizarCarrinho();
-    }
+    carrinho.splice(idx,1);
+    atualizarCarrinho();
   }
 
-  async function buscarEnderecoPorCEP() {
-    const cepInput = document.getElementById("cep");
-    let cep = cepInput.value.replace(/\D/g, "");
-    if(cep.length !== 8) return;
-    try {
-      const res = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-      const data = await res.json();
-      if(!data.erro){
-        document.getElementById("rua").value = data.logradouro || "";
-        document.getElementById("bairro").value = data.bairro || "";
-      }
-    } catch (e) {
-      console.log("Erro ao buscar CEP", e);
-    }
-  }
-
-  async function buscarCEPPorEndereco() {
-    const ruaInput = document.getElementById("rua");
-    const bairroInput = document.getElementById("bairro");
-    const rua = ruaInput.value.trim();
-    const bairro = bairroInput.value.trim();
-    if(rua.length < 3) return;
-    try {
-      const res = await fetch(`https://viacep.com.br/ws/MS/Campo%20Grande/${encodeURIComponent(rua)}/json/`);
-      const lista = await res.json();
-      if(Array.isArray(lista) && lista.length > 0){
-        let entrada = lista[0];
-        if(bairro){
-          const filtro = lista.find(item => item.bairro && item.bairro.toLowerCase() === bairro.toLowerCase());
-          if(filtro) entrada = filtro;
-        }
-        document.getElementById("cep").value = entrada.cep || "";
-      }
-    } catch (e){
-      console.log("Erro buscar CEP pela rua", e);
-    }
-  }
-
-  document.getElementById("cep").addEventListener("blur", buscarEnderecoPorCEP);
-  document.getElementById("rua").addEventListener("blur", buscarCEPPorEndereco);
-  document.getElementById("bairro").addEventListener("blur", buscarCEPPorEndereco);
-
-  sabor1El.addEventListener("change", atualizarPreviewIngredientes);
-  sabor2El.addEventListener("change", atualizarPreviewIngredientes);
-
-  btnToggleAdicionaisEl.addEventListener("click", () => {
-    if(listaAdicionaisEl.style.display === "none" || listaAdicionaisEl.style.display === ""){
-      listaAdicionaisEl.style.display = "block";
-      btnToggleAdicionaisEl.innerText = "➖ Ocultar Adicionais ";
-      btnToggleAdicionaisEl.appendChild(adicionalCountEl);
+  document.getElementById("tamanho").addEventListener("change", carregarSabores);
+  document.getElementById("tipoPizza").addEventListener("change", () => {
+    const tamanho = document.getElementById("tamanho").value;
+    const tipoPizzaEl = document.getElementById("tipoPizza");
+    const boxSabor2 = document.getElementById("boxSabor2");
+    if(tamanho==="brotinho"){
+      tipoPizzaEl.value = "inteira";
+      tipoPizzaEl.disabled = true;
+      boxSabor2.style.display = "none";
     } else {
-      listaAdicionaisEl.style.display = "none";
+      tipoPizzaEl.disabled = false;
+      boxSabor2.style.display = tipoPizzaEl.value==="meio"?"block":"none";
+    }
+    atualizarPreviewIngredientes();
+  });
+  document.getElementById("sabor1").addEventListener("change", atualizarPreviewIngredientes);
+  document.getElementById("sabor2").addEventListener("change", atualizarPreviewIngredientes);
+
+  document.getElementById("btnToggleAdicionais").addEventListener("click", () => {
+    const lista = document.getElementById("listaAdicionais");
+    if(lista.style.display==="block"){
+      lista.style.display="none";
       atualizarTextoAdicionais();
+    } else {
+      lista.style.display="block";
+      document.getElementById("btnToggleAdicionais").textContent = "➖ Ocultar Adicionais ";
+      document.getElementById("btnToggleAdicionais").appendChild(document.getElementById("adicionalCount"));
     }
   });
 
-  listaAdicionaisEl.addEventListener("change", atualizarTextoAdicionais);
+  document.getElementById("listaAdicionais").addEventListener("change", atualizarTextoAdicionais);
 
   document.getElementById("btnAdicionarPizza").addEventListener("click", () => {
     const tamanho = document.getElementById("tamanho").value;
     const tipo = document.getElementById("tipoPizza").value;
-    const s1 = sabor1El.value;
-    const s2 = sabor2El.value;
-    if (!s1 || !SABORES[s1]) {
+    const s1 = document.getElementById("sabor1").value;
+    const s2 = document.getElementById("sabor2").value;
+    if(!s1 || !SABORES[s1]){
       alert("Selecione o sabor 1.");
       return;
     }
-    if (tamanho === "brotinho" && tipo !== "inteira") {
+    if(tamanho==="brotinho" && tipo !== "inteira"){
       alert("Brotinho só aceita pizza inteira.");
       return;
     }
-    if (tipo === "meio" && (!s2 || !SABORES[s2])) {
+    if(tipo==="meio" && (!s2 || !SABORES[s2])){
       alert("Selecione o sabor 2 para pizza Meio a Meio.");
       return;
     }
     let descricao = "";
     let valor = 0;
     let ingredientes = "";
-    if (tamanho === "brotinho") {
+    if(tamanho==="brotinho"){
       descricao = `Brotinho 25cm - ${s1}`;
       valor = SABORES[s1].brotinho;
       ingredientes = SABORES[s1].ingredientes.join(", ");
-    } else if (tipo === "meio") {
+    } else if(tipo==="meio"){
       descricao = `Grande 35cm Meio a Meio - ${s1} / ${s2}`;
       valor = Math.max(SABORES[s1].grande, SABORES[s2].grande);
       ingredientes = `50% ${s1}: ${SABORES[s1].ingredientes.join(", ")} | 50% ${s2}: ${SABORES[s2].ingredientes.join(", ")}`;
@@ -667,35 +608,34 @@
     }
     const adicionaisSelecionados = [];
     let valorAdicional = 0;
-    listaAdicionaisEl.querySelectorAll("input[type=checkbox]:checked").forEach(input => {
+    document.querySelectorAll("#listaAdicionais input:checked").forEach(input => {
       adicionaisSelecionados.push(input.dataset.nome);
       valorAdicional += Number(input.value);
     });
-    if (adicionaisSelecionados.length) {
+    if(adicionaisSelecionados.length){
       descricao += " + " + adicionaisSelecionados.join(", ");
       valor += valorAdicional;
     }
     const obs = document.getElementById("obsPizza").value.trim();
     carrinho.push({descricao, ingredientes, observacao: obs, valor});
     atualizarCarrinho();
-    listaAdicionaisEl.querySelectorAll("input[type=checkbox]").forEach(i => i.checked = false);
+    document.querySelectorAll("#listaAdicionais input").forEach(i => i.checked=false);
     atualizarTextoAdicionais();
     document.getElementById("obsPizza").value = "";
     alert("Pizza adicionada ao carrinho!");
   });
 
   document.getElementById("btnAdicionarBebida").addEventListener("click", () => {
-    const bebidaSel = document.getElementById("bebida");
-    const val = bebidaSel.value;
-    if (!val) {
+    const sel = document.getElementById("bebida");
+    if(!sel.value){
       alert("Selecione uma bebida.");
       return;
     }
-    const descricao = bebidaSel.options[bebidaSel.selectedIndex].text.split(" - ")[0];
-    const valor = Number(val);
-    carrinho.push({descricao, ingredientes: "", observacao: "", valor});
+    const descricao = sel.options[sel.selectedIndex].text.split(" - ")[0];
+    const valor = Number(sel.value);
+    carrinho.push({descricao, ingredientes:"", observacao:"", valor});
     atualizarCarrinho();
-    bebidaSel.value = "";
+    sel.value = "";
     alert("Bebida adicionada ao carrinho!");
   });
 
@@ -710,30 +650,26 @@
     const rua = document.getElementById("rua").value.trim();
     const numero = document.getElementById("numero").value.trim();
     const bairro = document.getElementById("bairro").value.trim();
-    if (!nome || !telefone || !cep || !rua || !numero || !bairro) {
+    if(!nome || !telefone || !cep || !rua || !numero || !bairro){
       alert("Preencha todos os dados do cliente corretamente.");
       return;
     }
-    const textoPedido = montarTextoPedidoWhats();
-    const urlWhats = `https://wa.me/${numeroWhats}?text=` + encodeURIComponent(textoPedido);
+    let texto = `KING VENTURA PIZZARIA\n\nCliente: ${nome}\nTelefone: ${telefone}\nCEP: ${cep}\nEndereço: ${rua}\nNúmero: ${numero}\nBairro: ${bairro}\nObservação: ${document.getElementById("observacao").value.trim()}\n\nItens do Pedido:\n`;
+    carrinho.forEach(item => {
+      texto += `${item.descricao} - R$ ${item.valor.toFixed(2)}\n`;
+      if(item.ingredientes) texto += `Ingredientes: ${item.ingredientes}\n`;
+      if(item.observacao) texto += `Obs: ${item.observacao}\n`;
+      texto += "\n";
+    });
+    texto += `TOTAL: ${document.getElementById("totalPedido").textContent}\n`;
+    const urlWhats = `https://wa.me/${numeroWhats}?text=` + encodeURIComponent(texto);
     window.open(urlWhats, "_blank");
   });
 
-  // Tema claro/escuro toggle
-  const btnTema = document.getElementById("btnTema");
-  btnTema.addEventListener("click", () => {
-    const atual = document.body.getAttribute("data-tema");
-    const novo = atual === "escuro" ? "claro" : "escuro";
-    document.body.setAttribute("data-tema", novo);
-    btnTema.textContent = novo === "escuro" ? "🌙 Escuro" : "☀️ Claro";
-    localStorage.setItem("kv_tema", novo);
-  });
-  // Aplica tema salvo
-  const temaSalvo = localStorage.getItem("kv_tema");
-  if(temaSalvo){
-    document.body.setAttribute("data-tema", temaSalvo);
-    btnTema.textContent = temaSalvo === "escuro" ? "🌙 Escuro" : "☀️ Claro";
-  }
+  // Inicialização
+  montarListaAdicionais();
+  carregarSabores();
+  atualizarTextoAdicionais();
 </script>
 </body>
 </html>
