@@ -16,13 +16,14 @@
     --gold-dark: #4a90e2;
     --danger-dark: #cf4638;
 
-    --bg-light: #eef3fb;
+    /* Alteração só aqui nas cores do modo claro */
+    --bg-light: #f5f7fa;
     --card-light: #ffffff;
-    --card2-light: #e3ecf9;
-    --border-light: #b9cdea;
-    --azul-light: #1b4f9c;
-    --texto-light: #08203f;
-    --muted-light: #4a6a94;
+    --card2-light: #f0f3f8;
+    --border-light: #cfd8e4;
+    --azul-light: #2c3e50;
+    --texto-light: #3b3b3b;
+    --muted-light: #7f8c8d;
     --gold-light: #1b4f9c;
     --danger-light: #b8302a;
   }
@@ -39,7 +40,7 @@
     --danger: var(--danger-dark);
   }
 
-  body[data-tema="Claro"] {
+  body[data-tema="claro"] {
     --bg: var(--bg-light);
     --card: var(--card-light);
     --card2: var(--card2-light);
@@ -286,7 +287,7 @@
   }
 </style>
 </head>
-<body data-tema="Escuro">
+<body data-tema="escuro">
 <div class="container">
   <div class="brand-header">
     <div class="logo">
@@ -680,31 +681,32 @@
   carregarSabores();
   atualizarTextoAdicionais();
 
-  // Tema toggle
-const btnTema = document.getElementById("btnTema");
-function atualizarTextoBotaoTema() {
-  const atual = document.body.getAttribute("data-tema");
-  if (atual === "escuro") {
-    btnTema.textContent = "☀️ Claro";
-  } else {
-    btnTema.textContent = "🌙 Escuro";
+  // Tema toggle atualizado - texto do botão mostra o tema oposto
+  const btnTema = document.getElementById("btnTema");
+  function atualizarTextoBotaoTema() {
+    const atual = document.body.getAttribute("data-tema");
+    if (atual === "escuro") {
+      btnTema.textContent = "☀️ Claro";
+    } else {
+      btnTema.textContent = "🌙 Escuro";
+    }
   }
-}
-btnTema.addEventListener("click", () => {
-  const atual = document.body.getAttribute("data-tema");
-  const novo = atual === "escuro" ? "claro" : "escuro";
-  document.body.setAttribute("data-tema", novo);
-  localStorage.setItem("kv_tema", novo);
+  btnTema.addEventListener("click", () => {
+    const atual = document.body.getAttribute("data-tema");
+    const novo = atual === "escuro" ? "claro" : "escuro";
+    document.body.setAttribute("data-tema", novo);
+    localStorage.setItem("kv_tema", novo);
+    atualizarTextoBotaoTema();
+  });
+
+  // Atualizar texto botão tema na inicialização
+  const temaSalvo = localStorage.getItem("kv_tema");
+  if(temaSalvo){
+    document.body.setAttribute("data-tema", temaSalvo);
+  } else {
+    document.body.setAttribute("data-tema", "escuro");
+  }
   atualizarTextoBotaoTema();
-});
-// Atualiza texto na inicialização conforme tema salvo ou padrão
-const temaSalvo = localStorage.getItem("kv_tema");
-if(temaSalvo){
-  document.body.setAttribute("data-tema", temaSalvo);
-} else {
-  document.body.setAttribute("data-tema", "escuro"); // tema padrão, se quiser
-}
-atualizarTextoBotaoTema();
 
   // Preenchimento automático CEP -> endereço
   const cepInput = document.getElementById("cep");
