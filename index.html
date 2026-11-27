@@ -69,11 +69,8 @@
     margin: auto;
   }
   .brand-header {
-    position: relative;
-    margin-bottom: 20px;
-  }
-  .logo {
     text-align: center;
+    margin-bottom: 20px;
   }
   .logo h1 {
     color: var(--azul);
@@ -81,10 +78,31 @@
     font-weight: 700;
     line-height: 1;
   }
+  .logo h1 div {
+    line-height: 1;
+  }
   .logo p {
     color: var(--muted);
     font-size: 18px;
     margin-top: 6px;
+  }
+  .mode-toggle-container {
+    margin-top: 8px;
+  }
+  button.mode-toggle {
+    padding: 6px 16px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    border-radius: 8px;
+    background: var(--azul);
+    color: white;
+    border: none;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.3s ease;
+  }
+  button.mode-toggle:hover {
+    background-color: #3671c6;
   }
   .italian-stripes {
     display: flex;
@@ -101,24 +119,7 @@
   .green { background-color: #008C45; }
   .white { background-color: #F4F5F0; }
   .red { background-color: #CD212A; }
-  button.mode-toggle {
-    position: absolute;
-    top: 0;
-    right: 0;
-    padding: 6px 10px;
-    font-weight: 600;
-    font-size: 0.875rem;
-    border-radius: 8px;
-    background: var(--azul);
-    color: white;
-    border: none;
-    cursor: pointer;
-    user-select: none;
-    transition: background-color 0.3s ease;
-  }
-  button.mode-toggle:hover {
-    background-color: #3671c6;
-  }
+
   .card {
     background: var(--card);
     border: 1px solid var(--border);
@@ -318,10 +319,12 @@
         <div class="red"></div>
       </div>
       <p>Monte seu pedido online</p>
+      <div class="mode-toggle-container">
+        <button id="btnTema" class="mode-toggle" type="button" aria-label="Alternar modo claro/escuro">
+          🌙 Escuro
+        </button>
+      </div>
     </div>
-    <button id="btnTema" class="mode-toggle" type="button" aria-label="Alternar modo claro/escuro">
-      🌙 Escuro
-    </button>
   </div>
 
   <div class="card">
@@ -412,9 +415,7 @@
 </footer>
 
 <script>
-  // Código JavaScript permanece inalterado, igual ao entregue anteriormente.
-  
-  const numeroWhats = "5567991476156"; // Número para WhatsApp
+  const numeroWhats = "5567991476156";
 
   const SABORES = {
     "Muçarela": {brotinho:15, grande:35, ingredientes:["molho", "muçarela", "azeitonas", "orégano"]},
