@@ -102,7 +102,6 @@
     cursor: pointer;
     user-select: none;
     transition: background-color 0.3s ease;
-    outline-offset: 2px;
   }
   button.mode-toggle:hover {
     background-color: #3671c6;
@@ -179,6 +178,7 @@
     font-size: 1rem;
     margin-top: 10px;
     transition: background-color 0.3s;
+    white-space: nowrap;
   }
   button:hover, button.mode-toggle:hover {
     opacity: 0.9;
@@ -224,32 +224,33 @@
     margin-top: 10px;
   }
   .item-carrinho {
-    background: var(--card2);
-    border-radius: 10px;
-    margin-bottom: 8px;
-    padding: 10px 12px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
+    background: var(--card2);
+    border-radius: 10px;
+    margin-bottom: 8px;
+    padding: 10px 16px;
     word-break: break-word;
+    white-space: normal;
   }
   .item-carrinho > div {
-    flex: 1;
+    flex-grow: 1;
+    overflow-wrap: break-word;
   }
   .item-carrinho button {
+    flex-shrink: 0;
     background: var(--danger);
     border: none;
     border-radius: 6px;
-    color: #fff;
-    padding: 6px 10px;
+    color: white;
+    padding: 6px 14px;
     cursor: pointer;
-    font-size: 0.85rem;
     font-weight: 700;
+    font-size: 0.85rem;
     white-space: nowrap;
-    flex-shrink: 0;
   }
-
   .total {
     font-size: 24px;
     font-weight: bold;
@@ -524,8 +525,8 @@
       <div class="item-carrinho">
         <div>
           <b>${item.descricao}</b>
-          ${item.ingredientes ? `<div style="font-style: italic; color: var(--muted); font-size: 0.9rem;">${item.ingredientes}</div>` : ""}
-          ${item.observacao ? `<div style="color: var(--azul); font-size: 0.9rem;">Obs: ${item.observacao}</div>` : ""}
+          ${item.ingredientes ? `<div style="font-style: italic; color: var(--muted); font-size: 0.85rem;">${item.ingredientes}</div>` : ""}
+          ${item.observacao ? `<div style="color: var(--azul); font-size: 0.85rem;">Obs: ${item.observacao}</div>` : ""}
         </div>
         <button type="button" onclick="removerItem(${idx})" aria-label="Remover item do carrinho">Excluir</button>
       </div>
@@ -670,6 +671,21 @@
   montarListaAdicionais();
   carregarSabores();
   atualizarTextoAdicionais();
+
+  // Tema toggle
+  const btnTema = document.getElementById("btnTema");
+  btnTema.addEventListener("click", () => {
+    const atual = document.body.getAttribute("data-tema");
+    const novo = atual === "escuro" ? "claro" : "escuro";
+    document.body.setAttribute("data-tema", novo);
+    btnTema.textContent = novo === "escuro" ? "🌙 Escuro" : "☀️ Claro";
+    localStorage.setItem("kv_tema", novo);
+  });
+  const temaSalvo = localStorage.getItem("kv_tema");
+  if(temaSalvo){
+    document.body.setAttribute("data-tema", temaSalvo);
+    btnTema.textContent = temaSalvo === "escuro" ? "🌙 Escuro" : "☀️ Claro";
+  }
 </script>
 </body>
 </html>
