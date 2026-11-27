@@ -6,16 +6,51 @@
 <title>King Ventura Cliente</title>
 <style>
   :root {
-    --bg: #05080f;
-    --card: #0b1526;
-    --card2: #132241;
-    --border: #1e3560;
-    --azul: #4a90e2;
-    --texto: #ffffff;
-    --muted: #9fb4d6;
-    --gold: #4a90e2;
-    --danger: #cf4638;
+    --bg-dark: #05080f;
+    --card-dark: #0b1526;
+    --card2-dark: #132241;
+    --border-dark: #1e3560;
+    --azul-dark: #4a90e2;
+    --texto-dark: #ffffff;
+    --muted-dark: #9fb4d6;
+    --gold-dark: #4a90e2;
+    --danger-dark: #cf4638;
+
+    --bg-light: #eef3fb;
+    --card-light: #ffffff;
+    --card2-light: #e3ecf9;
+    --border-light: #b9cdea;
+    --azul-light: #1b4f9c;
+    --texto-light: #08203f;
+    --muted-light: #4a6a94;
+    --gold-light: #1b4f9c;
+    --danger-light: #b8302a;
   }
+
+  body[data-tema="escuro"] {
+    --bg: var(--bg-dark);
+    --card: var(--card-dark);
+    --card2: var(--card2-dark);
+    --border: var(--border-dark);
+    --azul: var(--azul-dark);
+    --texto: var(--texto-dark);
+    --muted: var(--muted-dark);
+    --gold: var(--gold-dark);
+    --danger: var(--danger-dark);
+  }
+
+  body[data-tema="claro"] {
+    --bg: var(--bg-light);
+    --card: var(--card-light);
+    --card2: var(--card2-light);
+    --border: var(--border-light);
+    --azul: var(--azul-light);
+    --texto: var(--texto-light);
+    --muted: var(--muted-light);
+    --gold: var(--gold-light);
+    --danger: var(--danger-light);
+  }
+
   * {
     box-sizing: border-box;
     margin: 0;
@@ -27,14 +62,20 @@
     color: var(--texto);
     padding: 16px;
     line-height: 1.45;
+    transition: background-color 0.3s, color 0.3s;
   }
   .container {
     max-width: 900px;
     margin: auto;
   }
+  .brand-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
   .logo {
     text-align: center;
-    margin-bottom: 10px;
   }
   .logo h1 {
     color: var(--azul);
@@ -44,6 +85,20 @@
     color: var(--muted);
     font-size: 18px;
   }
+  button.mode-toggle {
+    background: none;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    padding: 6px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+  }
+  button.mode-toggle:hover {
+    background-color: var(--gold);
+    color: var(--bg);
+  }
   .italian-stripes {
     display: flex;
     justify-content: center;
@@ -52,8 +107,8 @@
     margin-bottom: 18px;
   }
   .italian-stripes div {
-    width: 50px;   
-    height: 10px;  
+    width: 50px;
+    height: 10px;
     border-radius: 5px;
   }
   .green { background-color: #008C45; }
@@ -66,6 +121,7 @@
     border-radius: 15px;
     padding: 15px;
     margin-bottom: 15px;
+    transition: background-color 0.3s, border-color 0.3s;
   }
   .card h2 {
     color: var(--azul);
@@ -84,6 +140,7 @@
     border-radius: 10px;
     padding: 12px;
     margin-top: 8px;
+    transition: background-color 0.3s, border-color 0.3s, color 0.3s;
   }
   select {
     cursor:pointer;
@@ -112,6 +169,7 @@
     font-weight: bold;
     font-size: 1rem;
     margin-top: 10px;
+    transition: background-color 0.3s;
   }
   button:hover {
     opacity: 0.9;
@@ -133,7 +191,6 @@
     border-radius: 10px;
     background: var(--card2);
   }
-  
   .extra-item {
     display: flex;
     align-items: center;
@@ -168,6 +225,9 @@
     gap: 12px;
     word-break: break-word;
   }
+  .item-carrinho > div {
+    flex: 1;
+  }
   .item-carrinho button {
     background: var(--danger);
     border: none;
@@ -180,7 +240,6 @@
     white-space: nowrap;
     flex-shrink: 0;
   }
-
   .total {
     font-size: 24px;
     font-weight: bold;
@@ -239,16 +298,19 @@
   }
 </style>
 </head>
-<body>
+<body data-tema="escuro">
 <div class="container">
-  <div class="logo">
-    <h1>👑 KING VENTURA</h1>
-    <div class="italian-stripes">
-      <div class="green"></div>
-      <div class="white"></div>
-      <div class="red"></div>
+  <div class="brand-header">
+    <div class="logo">
+      <h1>👑 KING VENTURA</h1>
+      <div class="italian-stripes">
+        <div class="green"></div>
+        <div class="white"></div>
+        <div class="red"></div>
+      </div>
+      <p>Monte seu pedido online</p>
     </div>
-    <p>Monte seu pedido online</p>
+    <button id="btnTema" class="mode-toggle" type="button" aria-label="Alternar modo claro/escuro">🌙 Escuro</button>
   </div>
 
   <div class="card">
@@ -256,14 +318,14 @@
     <div class="grid grid-2">
       <div>
         <label for="tamanho">Tamanho</label>
-        <select id="tamanho">
+        <select id="tamanho" aria-describedby="ingredientes">
           <option value="brotinho">Brotinho 25cm (1 sabor)</option>
           <option value="grande">Grande 35cm</option>
         </select>
       </div>
       <div>
         <label for="tipoPizza">Tipo</label>
-        <select id="tipoPizza">
+        <select id="tipoPizza" aria-describedby="ingredientes">
           <option value="inteira">Inteira</option>
           <option value="meio">Meio a Meio</option>
         </select>
@@ -273,20 +335,20 @@
     <div class="grid grid-2" style="margin-top: 15px;">
       <div>
         <label for="sabor1">Sabor 1</label>
-        <select id="sabor1"></select>
+        <select id="sabor1" aria-describedby="ingredientes"></select>
       </div>
       <div id="boxSabor2" style="display:none;">
         <label for="sabor2">Sabor 2 (Meio a Meio)</label>
-        <select id="sabor2"></select>
+        <select id="sabor2" aria-describedby="ingredientes"></select>
       </div>
     </div>
 
     <div id="ingredientes"></div>
 
-    <div class="btn-toggle-adicionais" id="btnToggleAdicionais">
+    <div class="btn-toggle-adicionais" id="btnToggleAdicionais" tabindex="0">
       ➕ Adicionais <span class="adicional-count" id="adicionalCount">0</span>
     </div>
-    <div class="extra-list" id="listaAdicionais"></div>
+    <div class="extra-list" id="listaAdicionais" role="region" aria-label="Lista de adicionais"></div>
 
     <label for="obsPizza" style="margin-top: 15px;">Observação da Pizza</label>
     <input id="obsPizza" placeholder="Ex: sem cebola, assar bem" />
@@ -686,6 +748,22 @@
   montarListaAdicionais();
   carregarSabores();
   atualizarTextoAdicionais();
+
+  // Tema claro/escuro simples (backup)
+  const btnTema = document.getElementById("btnTema");
+  btnTema.addEventListener("click", () => {
+    const atual = document.body.getAttribute("data-tema");
+    const novo = atual === "escuro" ? "claro" : "escuro";
+    document.body.setAttribute("data-tema", novo);
+    btnTema.textContent = novo === "escuro" ? "🌙 Escuro" : "☀️ Claro";
+    localStorage.setItem("kv_tema", novo);
+  });
+  // Aplica tema salvo localStorage
+  const temaSalvo = localStorage.getItem("kv_tema");
+  if(temaSalvo){
+    document.body.setAttribute("data-tema", temaSalvo);
+    btnTema.textContent = temaSalvo === "escuro" ? "🌙 Escuro" : "☀️ Claro";
+  }
 </script>
 </body>
 </html>
