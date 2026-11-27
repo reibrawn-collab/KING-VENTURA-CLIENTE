@@ -225,7 +225,7 @@
   }
   .item-carrinho {
     display: flex;
-    flex-direction: column; /* Para garantir que o texto fique acima e o botão abaixo */
+    flex-direction: column;
     gap: 8px;
     background: var(--card2);
     border-radius: 10px;
@@ -234,15 +234,14 @@
     word-break: normal;
   }
   .item-carrinho > div {
-    /* Corrigindo quebra indesejada de linha no texto do pedido */
-    white-space: nowrap;
-    overflow-wrap: normal;
+    white-space: normal !important;
+    overflow-wrap: break-word !important;
     flex-grow: 1;
-    text-overflow: ellipsis;
-    overflow: hidden;
+    text-overflow: unset !important;
+    overflow: visible !important;
   }
   .item-carrinho button {
-    align-self: flex-start; /* Para que o botão fique alinhado à esquerda dentro do container */
+    align-self: flex-start;
     background: var(--danger);
     border: none;
     border-radius: 6px;
@@ -527,8 +526,9 @@
       <div class="item-carrinho">
         <div>
           <b>${item.descricao}</b>
-          ${item.ingredientes ? `<div style="font-style: italic; color: var(--muted); font-size: 0.85rem;">${item.ingredientes}</div>` : ""}
-          ${item.observacao ? `<div style="color: var(--azul); font-size: 0.85rem;">Obs: ${item.observacao}</div>` : ""}
+          <div style="text-align: right; color: var(--azul); font-weight: 600; margin-top: 4px;">R$ ${item.valor.toFixed(2)}</div>
+          ${item.ingredientes ? `<div style="font-style: italic; color: var(--muted); font-size: 0.85rem; margin-top: 4px;">${item.ingredientes}</div>` : ""}
+          ${item.observacao ? `<div style="color: var(--azul); font-size: 0.85rem; margin-top: 4px;">Obs: ${item.observacao}</div>` : ""}
         </div>
         <button type="button" onclick="removerItem(${idx})" aria-label="Remover item do carrinho">Excluir</button>
       </div>
