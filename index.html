@@ -5,31 +5,241 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>King Ventura Cliente</title>
 <style>
-  /* Mesmos estilos do exemplo anterior, omitidos aqui por brevidade */
   :root {
     --bg: #05080f;
-    --surface: #0b1526;
-    --surface-2: #132241;
+    --card: #0b1526;
+    --card2: #132241;
     --border: #1e3560;
-    --text: #ffffff;
+    --azul: #4a90e2;
+    --texto: #ffffff;
     --muted: #9fb4d6;
     --gold: #4a90e2;
     --danger: #cf4638;
   }
-  /* ... todo o CSS igual ao anterior para manter estilo ... */
-  /* Recomendo manter o CSS do exemplo anterior para simplicidade */
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+  }
+  body {
+    background: var(--bg);
+    color: var(--texto);
+    padding: 16px;
+    line-height: 1.45;
+  }
+  .container {
+    max-width: 900px;
+    margin: auto;
+  }
+  .logo {
+    text-align: center;
+    margin-bottom: 10px;
+  }
+  .logo h1 {
+    color: var(--azul);
+    font-size: 36px;
+  }
+  .logo p {
+    color: var(--muted);
+    font-size: 18px;
+  }
+  .italian-stripes {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 8px;
+    margin-bottom: 18px;
+  }
+  .italian-stripes div {
+    width: 35px;
+    height: 6px;
+    border-radius: 4px;
+  }
+  .green { background-color: #008C45; }
+  .white { background-color: #F4F5F0; }
+  .red { background-color: #CD212A; }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    padding: 15px;
+    margin-bottom: 15px;
+  }
+  .card h2 {
+    color: var(--azul);
+    margin-bottom: 15px;
+  }
+  label {
+    display: block;
+    margin-top: 10px;
+    color: var(--muted);
+  }
+  input, select, textarea {
+    width: 100%;
+    background: var(--card2);
+    color: var(--texto);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px;
+    margin-top: 8px;
+  }
+  select {
+    cursor:pointer;
+    appearance:none;
+    padding-right: 30px;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="white"><polygon points="0,0 14,0 7,7"/></svg>');
+    background-repeat:no-repeat;
+    background-position:right 12px center;
+    background-size:10px;
+  }
+  .grid {
+    display: grid;
+    gap: 12px;
+  }
+  .grid-2 {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+  button {
+    cursor: pointer;
+    border: none;
+    background: var(--azul);
+    color: white;
+    padding: 12px;
+    border-radius: 10px;
+    width: 100%;
+    font-weight: bold;
+    font-size: 1rem;
+    margin-top: 10px;
+  }
+  button:hover {
+    opacity: 0.9;
+  }
+  #ingredientes {
+    margin-top: 10px;
+    font-size: 0.9rem;
+    color: var(--muted);
+    min-height: 40px;
+    font-style: italic;
+  }
+  .extra-list {
+    display: none;
+    max-height: 140px;
+    overflow-y: auto;
+    margin-top: 6px;
+    padding-left: 12px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--card2);
+  }
+  .extra-item {
+    margin-bottom: 6px;
+    color: var(--texto);
+    cursor: pointer;
+  }
+  .extra-item label {
+    cursor: pointer;
+  }
+  .extra-item input {
+    margin-right: 8px;
+  }
+  #carrinho {
+    margin-top: 10px;
+  }
+  .item-carrinho {
+    background: var(--card2);
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    position: relative;
+  }
+  .item-carrinho button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: var(--danger);
+    border: none;
+    border-radius: 6px;
+    color: #fff;
+    padding: 4px 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 700;
+  }
+  .total {
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--azul);
+    text-align: right;
+    margin-top: 10px;
+  }
+  .entrega-taxa {
+    color: var(--azul);
+    font-weight: 700;
+    margin-top: 10px;
+    text-align: right;
+  }
+  .btn-toggle-adicionais {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    background: var(--card2);
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    margin-top: 6px;
+    color: var(--azul);
+    font-weight: 600;
+  }
+  .btn-toggle-adicionais:hover {
+    background: var(--azul);
+    color: white;
+  }
+  .adicional-count {
+    background: var(--azul);
+    border-radius: 20px;
+    padding: 2px 10px;
+    color: white;
+    font-size: 0.85rem;
+  }
+  footer {
+    text-align: center;
+    margin: 20px 0;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #CD212A;
+  }
+  footer a {
+    color: #008C45;
+    text-decoration: none;
+  }
+  footer a:hover {
+    text-decoration: underline;
+  }
+  @media (max-width: 700px) {
+    .logo h1 {
+      font-size: 26px;
+    }
+  }
 </style>
 </head>
 <body>
 <div class="container">
   <div class="logo">
     <h1>👑 KING VENTURA</h1>
+    <div class="italian-stripes">
+      <div class="green"></div>
+      <div class="white"></div>
+      <div class="red"></div>
+    </div>
     <p>Monte seu pedido online</p>
   </div>
 
   <div class="card">
     <h2>🍕 Escolha sua Pizza</h2>
-    <div class="grid-2">
+    <div class="grid grid-2">
       <div>
         <label for="tamanho">Tamanho</label>
         <select id="tamanho">
@@ -46,7 +256,7 @@
       </div>
     </div>
 
-    <div class="grid-2" style="margin-top: 12px;">
+    <div class="grid grid-2" style="margin-top: 15px;">
       <div>
         <label for="sabor1">Sabor 1</label>
         <select id="sabor1"></select>
@@ -57,19 +267,17 @@
       </div>
     </div>
 
-    <div id="ingredientes" style="margin-top:6px; font-style: italic; color: var(--muted); min-height: 40px;"></div>
+    <div id="ingredientes"></div>
 
-    <div id="btnToggleAdicionais" style="margin-top: 10px; cursor:pointer; background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; color: var(--gold); font-weight: 700; display: inline-flex; align-items: center; justify-content: space-between; width: 100%;">
-      ➕ Adicionais <span id="adicionalCount" style="background: var(--gold); border-radius: 999px; padding: 3px 10px; color: var(--bg); font-weight: 700; font-size: 0.9rem;">0</span>
+    <div class="btn-toggle-adicionais" id="btnToggleAdicionais">
+      ➕ Adicionais <span class="adicional-count" id="adicionalCount">0</span>
     </div>
-    <div id="listaAdicionais" class="extras-list" style="display:none; max-height:160px; overflow-y:auto; background: var(--surface-2); border:1px solid var(--border); border-radius:10px; padding:10px 14px; margin-top:8px;"></div>
+    <div class="extra-list" id="listaAdicionais"></div>
 
-    <label for="obsPizza" style="margin-top: 16px;">Observação da Pizza</label>
+    <label for="obsPizza" style="margin-top: 15px;">Observação da Pizza</label>
     <input id="obsPizza" placeholder="Ex: sem cebola, assar bem" />
 
-    <div class="btn-row" style="margin-top: 14px;">
-      <button id="btnAdicionarPizza">Adicionar Pizza ao Carrinho</button>
-    </div>
+    <button id="btnAdicionarPizza">Adicionar Pizza ao Carrinho</button>
   </div>
 
   <div class="card">
@@ -81,9 +289,7 @@
       <option value="10">Guaraná 1L - R$ 10,00</option>
       <option value="6">Coca-Cola Lata 310ml - R$ 6,00</option>
     </select>
-    <div class="btn-row" style="margin-top: 12px;">
-      <button id="btnAdicionarBebida">Adicionar Bebida ao Carrinho</button>
-    </div>
+    <button id="btnAdicionarBebida" style="margin-top: 12px;">Adicionar Bebida ao Carrinho</button>
   </div>
 
   <div class="card">
@@ -106,18 +312,20 @@
 
   <div class="card">
     <h2>🛒 Carrinho</h2>
-    <div id="carrinho" style="min-height: 80px; color: var(--muted); font-style: italic;">Nenhum item adicionado.</div>
-    <div id="taxaEntregaArea" style="margin-top: 4px; color: var(--gold); font-weight: 700; text-align:right;"></div>
-    <div id="totalPedido" style="margin-top: 8px; font-weight: 700; font-size: 1.3rem; color: var(--gold); text-align: right;">R$ 0,00</div>
+    <div id="carrinho"><div class="item-carrinho">Nenhum item adicionado.</div></div>
+    <div class="entrega-taxa" id="taxaEntregaArea"></div>
+    <div class="total" id="totalPedido">R$ 0,00</div>
   </div>
 
-  <div class="btn-row" style="margin-top:12px;">
-    <button id="btnFinalizarPedido">📦 Finalizar Pedido</button>
-  </div>
+  <button id="btnFinalizarPedido" style="margin-top:12px;">📦 Finalizar Pedido</button>
 </div>
 
+<footer>
+  Siga a gente no Instagram <a href="https://instagram.com/kingventura_pizzaria" target="_blank">@kingventura_pizzaria</a> 🚀
+</footer>
+
 <script>
-  const numeroWhats = "5567991476156"; // Seu número para WhatsApp (com código do Brasil)
+  const numeroWhats = "5567991476156"; // Número para WhatsApp
 
   const SABORES = {
     "Muçarela": {brotinho:15, grande:35, ingredientes:["molho", "muçarela", "azeitonas", "orégano"]},
@@ -147,7 +355,6 @@
 
   let carrinho = [];
 
-  // Elementos importantes
   const sabor1El = document.getElementById("sabor1");
   const sabor2El = document.getElementById("sabor2");
   const adicionalCountEl = document.getElementById("adicionalCount");
@@ -158,13 +365,11 @@
   const totalPedidoEl = document.getElementById("totalPedido");
   const taxaEntregaEl = document.getElementById("taxaEntregaArea");
 
-  // Função formatação ingredientes em texto legível
   function formarListaIngredientes(ingredientes){
     if(ingredientes.length <=1) return ingredientes.join("");
     return ingredientes.slice(0, ingredientes.length-1).join(", ") + " e " + ingredientes[ingredientes.length-1];
   }
 
-  // Carrega sabores no select, com ingredientes e preço no texto
   function carregarSabores() {
     const tamanho = document.getElementById("tamanho").value;
 
@@ -193,7 +398,6 @@
     sabor1El.value = (prev1 && SABORES[prev1]) ? prev1 : "";
     sabor2El.value = (prev2 && SABORES[prev2]) ? prev2 : "";
 
-    // Ajusta tipo pizza e caixa sabor 2
     const tipoPizzaEl = document.getElementById("tipoPizza");
     const boxSabor2 = document.getElementById("boxSabor2");
 
@@ -208,7 +412,6 @@
     atualizarPreviewIngredientes();
   }
 
-  // Atualiza área ingredientes com base no sabor escolhido
   function atualizarPreviewIngredientes() {
     const tamanho = document.getElementById("tamanho").value;
     const tipo = document.getElementById("tipoPizza").value;
@@ -227,7 +430,6 @@
     }
   }
 
-  // Monta lista adicionais com checkboxes
   function montarListaAdicionais() {
     listaAdicionaisEl.innerHTML = "";
     ADICIONAIS.forEach(({nome, valor})=>{
@@ -238,7 +440,6 @@
     });
   }
 
-  // Atualiza texto e contagem no botão adicionais
   function atualizarTextoAdicionais() {
     const marcados = listaAdicionaisEl.querySelectorAll("input[type=checkbox]:checked");
     const qtd = marcados.length;
@@ -252,32 +453,28 @@
     }
   }
 
-  // Atualiza o conteúdo do carrinho e total
   function atualizarCarrinho() {
     if (carrinho.length === 0) {
-      carrinhoEl.innerHTML = '<p style="color: var(--muted); font-style: italic;">Nenhum item adicionado.</p>';
+      carrinhoEl.innerHTML = '<div class="item-carrinho">Nenhum item adicionado.</div>';
       totalPedidoEl.innerText = "R$ 0,00";
       taxaEntregaEl.innerText = "";
       return;
     }
     carrinhoEl.innerHTML = carrinho.map((item,i) => {
-      return `<div class="item">
+      return `<div class="item-carrinho">
         <b>${item.descricao}</b>
         ${item.ingredientes ? `<div style="font-style: italic; color: var(--muted); font-size: 0.9rem;">${item.ingredientes}</div>` : ""}
-        ${item.observacao ? `<div style="color: var(--gold); font-size: 0.9rem;">Obs: ${item.observacao}</div>` : ""}
-        <button type="button" onclick="removerItem(${i})">Excluir</button>
+        ${item.observacao ? `<div style="color: var(--azul); font-size: 0.9rem;">Obs: ${item.observacao}</div>` : ""}
+        <button type="button" onclick="removerItem(${i})" aria-label="Remover item do carrinho">Excluir</button>
       </div>`;
     }).join("");
 
-    // Para simplificar, taxa de entrega fixada a 0 aqui
     const subtotal = carrinho.reduce((acc,v) => acc + v.valor, 0);
-    const taxaEntrega = 0;
-
+    const taxaEntrega = 0; // Implemente depois se precisar
     taxaEntregaEl.innerText = taxaEntrega === 0 ? "🎉 Você ganhou entrega grátis!" : `Taxa de entrega: R$ ${taxaEntrega.toFixed(2)}`;
-    totalPedidoEl.innerText = `R$ ${(subtotal+taxaEntrega).toFixed(2)}`;
+    totalPedidoEl.innerText = `R$ ${(subtotal + taxaEntrega).toFixed(2)}`;
   }
 
-  // Remove item do carrinho
   function removerItem(idx) {
     if(idx >= 0 && idx < carrinho.length){
       carrinho.splice(idx,1);
@@ -285,12 +482,10 @@
     }
   }
 
-  // Busca endereço pelo CEP via ViaCEP e preenche rua e bairro
   async function buscarEnderecoPorCEP() {
     const cepInput = document.getElementById("cep");
     let cep = cepInput.value.replace(/\D/g, "");
     if(cep.length !== 8) return;
-
     try {
       const res = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
       const data = await res.json();
@@ -303,15 +498,12 @@
     }
   }
 
-  // Busca CEP pelo endereço (rua + bairro) em Campo Grande/MS via ViaCEP e preenche
   async function buscarCEPPorEndereco() {
     const ruaInput = document.getElementById("rua");
     const bairroInput = document.getElementById("bairro");
     const rua = ruaInput.value.trim();
     const bairro = bairroInput.value.trim();
-
     if(rua.length < 3) return;
-
     try {
       const res = await fetch(`https://viacep.com.br/ws/MS/Campo%20Grande/${encodeURIComponent(rua)}/json/`);
       const lista = await res.json();
@@ -323,12 +515,11 @@
         }
         document.getElementById("cep").value = entrada.cep || "";
       }
-    } catch(e){
+    } catch (e){
       console.log("Erro buscar CEP pela rua", e);
     }
   }
 
-  // Monta texto completo do pedido para enviar no WhatsApp
   function montarTextoPedidoWhats() {
     const nome = document.getElementById("nome").value.trim();
     const telefone = document.getElementById("telefone").value.trim();
@@ -339,17 +530,7 @@
     const obsCliente = document.getElementById("observacao").value.trim();
 
     let texto = `KING VENTURA PIZZARIA\n\n`;
-
-    texto += `Cliente: ${nome}\n`;
-    texto += `Telefone: ${telefone}\n`;
-    texto += `CEP: ${cep}\n`;
-    texto += `Endereço: ${rua}\n`;
-    texto += `Número: ${numero}\n`;
-    texto += `Bairro: ${bairro}\n`;
-    texto += `Observação: ${obsCliente}\n\n`;
-
-    texto += `ITENS DO PEDIDO\n`;
-
+    texto += `Cliente: ${nome}\nTelefone: ${telefone}\nCEP: ${cep}\nEndereço: ${rua}\nNúmero: ${numero}\nBairro: ${bairro}\nObservação: ${obsCliente}\n\nITENS DO PEDIDO\n`;
     carrinho.forEach(item => {
       texto += `${item.descricao} - R$ ${item.valor.toFixed(2)}\n`;
       if(item.ingredientes){
@@ -358,28 +539,19 @@
       if(item.observacao){
         texto += `Obs: ${item.observacao}\n`;
       }
-      texto += "\n";
+      texto += `\n`;
     });
-
     texto += `TOTAL: ${totalPedidoEl.innerText}\n`;
-
     return texto;
   }
 
-  // Eventos
-
-  // Cep input perde foco: busca endereço
   document.getElementById("cep").addEventListener("blur", buscarEnderecoPorCEP);
-
-  // Rua ou bairro mudam: busca CEP
   document.getElementById("rua").addEventListener("blur", buscarCEPPorEndereco);
   document.getElementById("bairro").addEventListener("blur", buscarCEPPorEndereco);
 
-  // Atualiza ingredientes quando sabor muda
   sabor1El.addEventListener("change", atualizarPreviewIngredientes);
   sabor2El.addEventListener("change", atualizarPreviewIngredientes);
 
-  // Botão para mostrar/esconder adicionais
   btnToggleAdicionaisEl.addEventListener("click", () => {
     if(listaAdicionaisEl.style.display === "none" || listaAdicionaisEl.style.display === ""){
       listaAdicionaisEl.style.display = "block";
@@ -393,32 +565,26 @@
 
   listaAdicionaisEl.addEventListener("change", atualizarTextoAdicionais);
 
-  // Botão adicionar pizza
   document.getElementById("btnAdicionarPizza").addEventListener("click", () => {
     const tamanho = document.getElementById("tamanho").value;
     const tipo = document.getElementById("tipoPizza").value;
     const s1 = sabor1El.value;
     const s2 = sabor2El.value;
-
     if (!s1 || !SABORES[s1]) {
       alert("Selecione o sabor 1.");
       return;
     }
-
     if (tamanho === "brotinho" && tipo !== "inteira") {
       alert("Brotinho só aceita pizza inteira.");
       return;
     }
-
     if (tipo === "meio" && (!s2 || !SABORES[s2])) {
       alert("Selecione o sabor 2 para pizza Meio a Meio.");
       return;
     }
-
     let descricao = "";
     let valor = 0;
     let ingredientes = "";
-
     if (tamanho === "brotinho") {
       descricao = `Brotinho 25cm - ${s1}`;
       valor = SABORES[s1].brotinho;
@@ -432,33 +598,25 @@
       valor = SABORES[s1].grande;
       ingredientes = SABORES[s1].ingredientes.join(", ");
     }
-
-    // Adicionais selecionados
     const adicionaisSelecionados = [];
     let valorAdicional = 0;
     listaAdicionaisEl.querySelectorAll("input[type=checkbox]:checked").forEach(input => {
       adicionaisSelecionados.push(input.dataset.nome);
       valorAdicional += Number(input.value);
     });
-
     if (adicionaisSelecionados.length) {
       descricao += " + " + adicionaisSelecionados.join(", ");
       valor += valorAdicional;
     }
-
     const obs = document.getElementById("obsPizza").value.trim();
-
     carrinho.push({descricao, ingredientes, observacao: obs, valor});
     atualizarCarrinho();
-
     listaAdicionaisEl.querySelectorAll("input[type=checkbox]").forEach(i => i.checked = false);
     atualizarTextoAdicionais();
     document.getElementById("obsPizza").value = "";
-
     alert("Pizza adicionada ao carrinho!");
   });
 
-  // Botão adicionar bebida
   document.getElementById("btnAdicionarBebida").addEventListener("click", () => {
     const bebidaSel = document.getElementById("bebida");
     const val = bebidaSel.value;
@@ -474,7 +632,6 @@
     alert("Bebida adicionada ao carrinho!");
   });
 
-  // Botão finalizar pedido - envia via WhatsApp
   document.getElementById("btnFinalizarPedido").addEventListener("click", () => {
     if(carrinho.length === 0){
       alert("Adicione pelo menos um item ao carrinho antes de finalizar.");
@@ -486,19 +643,15 @@
     const rua = document.getElementById("rua").value.trim();
     const numero = document.getElementById("numero").value.trim();
     const bairro = document.getElementById("bairro").value.trim();
-
     if (!nome || !telefone || !cep || !rua || !numero || !bairro) {
       alert("Preencha todos os dados do cliente corretamente.");
       return;
     }
-
     const textoPedido = montarTextoPedidoWhats();
     const urlWhats = `https://wa.me/${numeroWhats}?text=` + encodeURIComponent(textoPedido);
-
     window.open(urlWhats, "_blank");
   });
 
-  // Eventos adicionais para mudar visibilidade do combo sabor2
   document.getElementById("tamanho").addEventListener("change", carregarSabores);
   document.getElementById("tipoPizza").addEventListener("change", () => {
     const tipoPizzaEl = document.getElementById("tipoPizza");
@@ -514,11 +667,9 @@
     atualizarPreviewIngredientes();
   });
 
-  // Inicializa a tela com os dados
   montarListaAdicionais();
   carregarSabores();
   atualizarTextoAdicionais();
-
 </script>
 </body>
 </html>
