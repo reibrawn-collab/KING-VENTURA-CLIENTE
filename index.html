@@ -671,7 +671,6 @@
     alert("Bebida adicionada ao carrinho!");
   });
 
-  // Calcula e retorna taxa conforme distância nas regras
   function calcularTaxaEntrega(distancia) {
     if (distancia <= 3) {
       return 0;
@@ -685,7 +684,6 @@
     }
   }
 
-  // Atualiza taxa e total com Google Maps API
   function atualizarTaxaEntrega() {
     const cepInput = document.getElementById("cep").value;
     const cepLimpo = cepInput.replace(/\D/g, "");
@@ -722,14 +720,22 @@
                 document.getElementById("totalPedido").textContent = `Total: R$ 0,00`;
               }
             } else {
-              alert("Não foi possível calcular a distância para o CEP informado.");
+              // Mesmo que o Google Maps não encontre, tenta manter o total de itens sem taxa
+              const totalItens = carrinho.reduce((acc,item) => acc + item.valor, 0);
+              document.getElementById("taxaEntregaArea").textContent = "";
+              document.getElementById("totalPedido").textContent = `R$ ${totalItens.toFixed(2)}`;
             }
           } else {
-            alert("Erro ao calcular a distância.");
+            const totalItens = carrinho.reduce((acc,item) => acc + item.valor, 0);
+            document.getElementById("taxaEntregaArea").textContent = "";
+            document.getElementById("totalPedido").textContent = `R$ ${totalItens.toFixed(2)}`;
           }
         });
       } else {
-        alert("CEP informado inválido ou não encontrado.");
+        alert("CEP informado não localizado na consulta de endereço. Por favor, verifique os dados.");
+        const totalItens = carrinho.reduce((acc,item) => acc + item.valor, 0);
+        document.getElementById("taxaEntregaArea").textContent = "";
+        document.getElementById("totalPedido").textContent = `R$ ${totalItens.toFixed(2)}`;
       }
     });
   }
@@ -747,10 +753,20 @@
             document.getElementById("estado").value = data.uf || "";
             atualizarTaxaEntrega();
           } else {
-            alert("CEP não encontrado.");
+            // Apenas alerta que pode não encontrar e mantém o cálculo da taxa
+            alert("CEP não encontrado na base do ViaCEP, confirme os dados.");
+            atualizarTaxaEntrega();
           }
         })
-        .catch(() => alert("Erro ao consultar o CEP."));
+        .catch(() => {
+          alert("Erro ao consultar o CEP, confirme os dados.");
+          atualizarTaxaEntrega();
+        });
+    } else {
+      // Se CEP inválido ou incompleto limpa taxa e mostra total de itens
+      document.getElementById("taxaEntregaArea").textContent = "";
+      const totalItens = carrinho.reduce((acc,item) => acc + item.valor, 0);
+      document.getElementById("totalPedido").textContent = `R$ ${totalItens.toFixed(2)}`;
     }
   });
 
@@ -871,7 +887,6 @@
 
 </script>
 
-<!-- Google Maps API Key aqui -->
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC8TWQMm5cRwx4LfHuUz2Rtuwt0ivKXMME&libraries=places" async defer></script>
 
 </body>
