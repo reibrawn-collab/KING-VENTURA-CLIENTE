@@ -386,7 +386,8 @@
     <label for="rua">Rua</label>
     <input id="rua" placeholder="Rua" />
     <label for="bairro">Bairro</label>
-    <input id="bairro" placeholder="Bairro" />
+    <input id="bairro" list="listaBairros" placeholder="Digite ou selecione seu bairro" />
+    <datalist id="listaBairros"></datalist>
     <label for="cidade">Cidade</label>
     <input id="cidade" placeholder="Cidade" />
     <label for="estado">Estado</label>
@@ -452,7 +453,87 @@
     {nome:"Bacon Extra", valor:5}
   ];
 
+  // Tabela de bairros atendidos em Campo Grande - MS com distância aproximada a partir do Jardim Tarumã (até 10 km)
+  const BAIRROS_DISTANCIA = [
+    { nome: "Jardim Tarumã", km: 1.5 },
+    { nome: "Tarumã", km: 1.5 },
+    { nome: "Coophavila II", km: 2.5 },
+    { nome: "Coophavila 2", km: 2.5 },
+    { nome: "Jardim Batistão", km: 2.8 },
+    { nome: "Batistão", km: 2.8 },
+    { nome: "Vila Jacy", km: 3.5 },
+    { nome: "Jardim Tijuca", km: 3.5 },
+    { nome: "Tijuca", km: 3.5 },
+    { nome: "Residencial Oliveira", km: 3.8 },
+    { nome: "Jardim São Conrado", km: 4.0 },
+    { nome: "São Conrado", km: 4.0 },
+    { nome: "Vila Fernanda", km: 4.2 },
+    { nome: "Portal Caiobá", km: 4.5 },
+    { nome: "Caiobá", km: 4.5 },
+    { nome: "Jardim Santa Emília", km: 4.5 },
+    { nome: "Santa Emília", km: 4.5 },
+    { nome: "Vila União", km: 4.8 },
+    { nome: "União", km: 4.8 },
+    { nome: "Jardim Leblon", km: 5.0 },
+    { nome: "Leblon", km: 5.0 },
+    { nome: "Guanandi", km: 5.2 },
+    { nome: "Jardim Guanandi", km: 5.2 },
+    { nome: "Aero Rancho", km: 5.5 },
+    { nome: "Conjunto Aero Rancho", km: 5.5 },
+    { nome: "Jardim das Nações", km: 5.8 },
+    { nome: "Jardim Ouro Verde", km: 6.0 },
+    { nome: "Jardim Centenário", km: 6.2 },
+    { nome: "Centenário", km: 6.2 },
+    { nome: "Jardim Canguru", km: 6.5 },
+    { nome: "Jardim Colorado", km: 6.5 },
+    { nome: "Vila Nhanhá", km: 6.8 },
+    { nome: "Nhanhá", km: 6.8 },
+    { nome: "Vila Piratininga", km: 7.0 },
+    { nome: "Piratininga", km: 7.0 },
+    { nome: "Jardim Jockey Club", km: 7.2 },
+    { nome: "Jockey Club", km: 7.2 },
+    { nome: "Vila Taquarussu", km: 7.5 },
+    { nome: "Taquarussu", km: 7.5 },
+    { nome: "Jardim América", km: 7.8 },
+    { nome: "Vila Bandeirantes", km: 8.0 },
+    { nome: "Bandeirantes", km: 8.0 },
+    { nome: "Vila Marcos Roberto", km: 8.0 },
+    { nome: "Jardim Paulista", km: 8.2 },
+    { nome: "Vila Alba", km: 8.3 },
+    { nome: "Jardim Imá", km: 8.5 },
+    { nome: "Parque Residencial Lageado", km: 8.5 },
+    { nome: "Lageado", km: 8.5 },
+    { nome: "Dom Antônio Barbosa", km: 8.8 },
+    { nome: "Jardim Anache", km: 9.0 },
+    { nome: "Vila Carvalho", km: 9.0 },
+    { nome: "Vila Taveirópolis", km: 9.2 },
+    { nome: "Taveirópolis", km: 9.2 },
+    { nome: "Vila Progresso", km: 9.3 },
+    { nome: "Jardim Bela Vista", km: 9.5 },
+    { nome: "Jardim Parati", km: 9.5 },
+    { nome: "Parati", km: 9.5 },
+    { nome: "Jardim Los Angeles", km: 9.8 },
+    { nome: "Los Angeles", km: 9.8 },
+    { nome: "Amambaí", km: 10.0 },
+    { nome: "Vila Sobrinho", km: 10.0 }
+  ];
+
   let carrinho = [];
+
+  function normalizarTexto(texto) {
+    return texto
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9\s]/g, "")
+      .trim();
+  }
+
+  function preencherDatalistBairros() {
+    const datalist = document.getElementById("listaBairros");
+    const nomesUnicos = [...new Set(BAIRROS_DISTANCIA.map(b => b.nome))];
+    datalist.innerHTML = nomesUnicos.map(nome => `<option value="${nome}">`).join("");
+  }
 
   function formarListaIngredientes(ingredientes){
     if(ingredientes.length <=1) return ingredientes.join("");
@@ -674,70 +755,70 @@
   function calcularTaxaEntrega(distancia) {
     if (distancia <= 3) {
       return 0;
-    } else if (distancia <= 4) {
-      return 5;
     } else if (distancia <= 10) {
-      return 5 + (distancia - 4);
+      // Passou de 3km até 4km = R$ 5,00; 4 a 5km = R$ 6,00; 5 a 6km = R$ 7,00 ... até 10km = R$ 11,00
+      return 5 + Math.ceil(distancia - 4);
     } else {
-      alert("Não atendemos sua região.");
       return null;
     }
   }
 
-  function atualizarTaxaEntrega() {
-    const cepInput = document.getElementById("cep").value;
-    const cepLimpo = cepInput.replace(/\D/g, "");
-    if(cepLimpo.length !==8) {
-      document.getElementById("taxaEntregaArea").textContent = "";
-      const totalItens = carrinho.reduce((acc,item) => acc + item.valor, 0);
-      document.getElementById("totalPedido").textContent = `R$ ${totalItens.toFixed(2)}`;
+  function buscarDistanciaPorBairro(bairroDigitado) {
+    const termo = normalizarTexto(bairroDigitado);
+    if (!termo) return null;
+
+    // 1. Busca correspondência exata
+    let encontrado = BAIRROS_DISTANCIA.find(b => normalizarTexto(b.nome) === termo);
+
+    // 2. Busca parcial caso o usuário tenha digitado sem "Jardim", "Vila", etc., ou vice-versa
+    if (!encontrado && termo.length >= 4) {
+      encontrado = BAIRROS_DISTANCIA.find(b => {
+        const nomeNorm = normalizarTexto(b.nome);
+        return nomeNorm.includes(termo) || termo.includes(nomeNorm);
+      });
+    }
+
+    return encontrado || null;
+  }
+
+  function atualizarTaxaEntrega(exibirAlertaForaArea = false) {
+    const bairroInput = document.getElementById("bairro").value.trim();
+    const totalItens = carrinho.reduce((acc, item) => acc + item.valor, 0);
+    const taxaArea = document.getElementById("taxaEntregaArea");
+    const totalPedidoEl = document.getElementById("totalPedido");
+
+    if (!bairroInput) {
+      taxaArea.textContent = "";
+      totalPedidoEl.textContent = `R$ ${totalItens.toFixed(2)}`;
       return;
     }
-    const geocoder = new google.maps.Geocoder();
-    geocoder.geocode({address: cepLimpo}, (results, status) => {
-      if(status==="OK" && results[0]){
-        const destino = results[0].geometry.location;
-        const origem = new google.maps.LatLng(-20.44278, -54.64639);
-        const service = new google.maps.DistanceMatrixService();
-        service.getDistanceMatrix({
-          origins: [origem],
-          destinations: [destino],
-          travelMode: 'DRIVING',
-          unitSystem: google.maps.UnitSystem.METRIC,
-        }, (response, status) => {
-          if(status==='OK'){
-            const element = response.rows[0].elements[0];
-            if(element.status==="OK"){
-              const distanciaKm = element.distance.value / 1000;
-              const taxa = calcularTaxaEntrega(distanciaKm);
-              if(taxa !== null){
-                const totalItens = carrinho.reduce((acc,item) => acc + item.valor, 0);
-                const total = totalItens + taxa;
-                document.getElementById("taxaEntregaArea").textContent = `Taxa de entrega: R$ ${taxa.toFixed(2)} (Distância: ${distanciaKm.toFixed(1)} km)`;
-                document.getElementById("totalPedido").textContent = `Total: R$ ${total.toFixed(2)}`;
-              } else {
-                document.getElementById("taxaEntregaArea").textContent = "Não atendemos sua região.";
-                document.getElementById("totalPedido").textContent = `Total: R$ 0,00`;
-              }
-            } else {
-              // Mesmo que o Google Maps não encontre, tenta manter o total de itens sem taxa
-              const totalItens = carrinho.reduce((acc,item) => acc + item.valor, 0);
-              document.getElementById("taxaEntregaArea").textContent = "";
-              document.getElementById("totalPedido").textContent = `R$ ${totalItens.toFixed(2)}`;
-            }
-          } else {
-            const totalItens = carrinho.reduce((acc,item) => acc + item.valor, 0);
-            document.getElementById("taxaEntregaArea").textContent = "";
-            document.getElementById("totalPedido").textContent = `R$ ${totalItens.toFixed(2)}`;
-          }
-        });
-      } else {
-        alert("CEP informado não localizado na consulta de endereço. Por favor, verifique os dados.");
-        const totalItens = carrinho.reduce((acc,item) => acc + item.valor, 0);
-        document.getElementById("taxaEntregaArea").textContent = "";
-        document.getElementById("totalPedido").textContent = `R$ ${totalItens.toFixed(2)}`;
+
+    const dadosBairro = buscarDistanciaPorBairro(bairroInput);
+
+    if (!dadosBairro) {
+      taxaArea.textContent = "Bairro fora da área de entrega (máx. 10 km) ou não localizado.";
+      totalPedidoEl.textContent = `R$ ${totalItens.toFixed(2)}`;
+      if (exibirAlertaForaArea) {
+        alert("Não atendemos sua região (limite máximo de 10 km do Jardim Tarumã) ou o bairro não foi localizado. Verifique o nome do bairro.");
       }
-    });
+      return;
+    }
+
+    const distanciaKm = dadosBairro.km;
+    const taxa = calcularTaxaEntrega(distanciaKm);
+
+    if (taxa !== null) {
+      const total = totalItens + taxa;
+      const textoTaxa = taxa === 0 ? "GRÁTIS" : `R$ ${taxa.toFixed(2)}`;
+      taxaArea.textContent = `Taxa de entrega (${dadosBairro.nome} - ~${distanciaKm.toFixed(1)} km): ${textoTaxa}`;
+      totalPedidoEl.textContent = `Total: R$ ${total.toFixed(2)}`;
+    } else {
+      taxaArea.textContent = "Não atendemos sua região (acima de 10 km).";
+      totalPedidoEl.textContent = `R$ ${totalItens.toFixed(2)}`;
+      if (exibirAlertaForaArea) {
+        alert("Não atendemos sua região.");
+      }
+    }
   }
 
   document.getElementById("cep").addEventListener("blur", () => {
@@ -751,22 +832,18 @@
             document.getElementById("bairro").value = data.bairro || "";
             document.getElementById("cidade").value = data.localidade || "";
             document.getElementById("estado").value = data.uf || "";
-            atualizarTaxaEntrega();
+            atualizarTaxaEntrega(true);
           } else {
-            // Apenas alerta que pode não encontrar e mantém o cálculo da taxa
             alert("CEP não encontrado na base do ViaCEP, confirme os dados.");
-            atualizarTaxaEntrega();
+            atualizarTaxaEntrega(false);
           }
         })
         .catch(() => {
           alert("Erro ao consultar o CEP, confirme os dados.");
-          atualizarTaxaEntrega();
+          atualizarTaxaEntrega(false);
         });
     } else {
-      // Se CEP inválido ou incompleto limpa taxa e mostra total de itens
-      document.getElementById("taxaEntregaArea").textContent = "";
-      const totalItens = carrinho.reduce((acc,item) => acc + item.valor, 0);
-      document.getElementById("totalPedido").textContent = `R$ ${totalItens.toFixed(2)}`;
+      atualizarTaxaEntrega(false);
     }
   });
 
@@ -782,12 +859,20 @@
         .then(data => {
           if(Array.isArray(data) && data.length>0 && !data[0].erro){
             document.getElementById("cep").value = data[0].cep || "";
-            atualizarTaxaEntrega();
+            atualizarTaxaEntrega(false);
           }
         })
         .catch(() => {});
     }
   }
+
+  document.getElementById("bairro").addEventListener("input", () => {
+    atualizarTaxaEntrega(false);
+  });
+
+  document.getElementById("bairro").addEventListener("blur", () => {
+    atualizarTaxaEntrega(true);
+  });
 
   ["rua", "bairro", "cidade", "estado"].forEach(id => {
     document.getElementById(id).addEventListener("blur", () => {
@@ -827,6 +912,14 @@
       alert("Preencha todos os dados do cliente corretamente.");
       return;
     }
+
+    const dadosBairro = buscarDistanciaPorBairro(bairro);
+    const taxaCalculada = dadosBairro ? calcularTaxaEntrega(dadosBairro.km) : null;
+    if (taxaCalculada === null) {
+      alert("Não atendemos o bairro informado (limite máximo de 10 km). Verifique o endereço antes de finalizar.");
+      return;
+    }
+
     if(!formaPagamento){
       alert("Selecione a forma de pagamento.");
       return;
@@ -840,10 +933,10 @@
       texto += "\n";
     });
 
-    const taxaTexto = document.getElementById("taxaEntregaArea").textContent;
-    if(taxaTexto.includes("Taxa de entrega:")){
-      const valorTaxa = parseFloat(taxaTexto.match(/\d+\,?\d*/)[0].replace(",", "."));
-      texto += `Taxa de entrega: R$ ${valorTaxa.toFixed(2)}\n`;
+    if (taxaCalculada === 0) {
+      texto += `Taxa de entrega: GRÁTIS\n`;
+    } else {
+      texto += `Taxa de entrega: R$ ${taxaCalculada.toFixed(2)}\n`;
     }
 
     texto += `TOTAL: ${document.getElementById("totalPedido").textContent.replace("Total: ", "")}\n`;
@@ -856,6 +949,7 @@
     window.open(urlWhats, "_blank");
   });
 
+  preencherDatalistBairros();
   montarListaAdicionais();
   carregarSabores();
   atualizarTextoAdicionais();
@@ -886,8 +980,6 @@
   atualizarTextoBotaoTema();
 
 </script>
-
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC8TWQMm5cRwx4LfHuUz2Rtuwt0ivKXMME&libraries=places" async defer></script>
 
 </body>
 </html>
