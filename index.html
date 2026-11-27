@@ -540,6 +540,10 @@
     }
   }
 
+  function limparCep(cep) {
+    return cep.replace(/\D/g, "");
+  }
+
   function atualizarCarrinho() {
     const container = document.getElementById("carrinho");
     if(carrinho.length === 0){
@@ -667,7 +671,7 @@
     alert("Bebida adicionada ao carrinho!");
   });
 
-  // Função para calcular taxa de entrega com base na distância em km
+  // Calcula e retorna taxa conforme distância nas regras
   function calcularTaxaEntrega(distancia) {
     if (distancia <= 3) {
       return 0;
@@ -681,18 +685,21 @@
     }
   }
 
-  // Função para atualizar taxa de entrega e total do pedido
+  // Atualiza taxa e total com Google Maps API
   function atualizarTaxaEntrega() {
-    const cepDestino = document.getElementById("cep").value.replace(/\D/g, "");
-    if(cepDestino.length !== 8) {
+    const cepInput = document.getElementById("cep").value;
+    const cepLimpo = cepInput.replace(/\D/g, "");
+    if(cepLimpo.length !==8) {
       document.getElementById("taxaEntregaArea").textContent = "";
+      const totalItens = carrinho.reduce((acc,item) => acc + item.valor, 0);
+      document.getElementById("totalPedido").textContent = `R$ ${totalItens.toFixed(2)}`;
       return;
     }
     const geocoder = new google.maps.Geocoder();
-    geocoder.geocode({address: cepDestino}, (results, status) => {
-      if (status === "OK" && results[0]) {
+    geocoder.geocode({address: cepLimpo}, (results, status) => {
+      if(status==="OK" && results[0]){
         const destino = results[0].geometry.location;
-        const origem = new google.maps.LatLng(-20.44278, -54.64639); // Rua Delamare 129 Campo Grande
+        const origem = new google.maps.LatLng(-20.44278, -54.64639);
         const service = new google.maps.DistanceMatrixService();
         service.getDistanceMatrix({
           origins: [origem],
@@ -700,13 +707,13 @@
           travelMode: 'DRIVING',
           unitSystem: google.maps.UnitSystem.METRIC,
         }, (response, status) => {
-          if (status === 'OK') {
+          if(status==='OK'){
             const element = response.rows[0].elements[0];
-            if(element.status === "OK"){
+            if(element.status==="OK"){
               const distanciaKm = element.distance.value / 1000;
               const taxa = calcularTaxaEntrega(distanciaKm);
               if(taxa !== null){
-                const totalItens = carrinho.reduce((acc, item) => acc + item.valor, 0);
+                const totalItens = carrinho.reduce((acc,item) => acc + item.valor, 0);
                 const total = totalItens + taxa;
                 document.getElementById("taxaEntregaArea").textContent = `Taxa de entrega: R$ ${taxa.toFixed(2)} (Distância: ${distanciaKm.toFixed(1)} km)`;
                 document.getElementById("totalPedido").textContent = `Total: R$ ${total.toFixed(2)}`;
@@ -727,7 +734,63 @@
     });
   }
 
-  document.getElementById("cep").addEventListener("blur", atualizarTaxaEntrega);
+  document.getElementById("cep").addEventListener("blur", () => {
+    const cepValido = document.getElementById("cep").value.replace(/\D/g, "");
+    if(cepValido.length === 8) {
+      fetch(`https://viacep.com.br/ws/${cepValido}/json/`)
+        .then(res => res.json())
+        .then(data => {
+          if (!data.erro) {
+            document.getElementById("rua").value = data.logradouro || "";
+            document.getElementById("bairro").value = data.bairro || "";
+            document.getElementById("cidade").value = data.localidade || "";
+            document.getElementById("estado").value = data.uf || "";
+            atualizarTaxaEntrega();
+          } else {
+            alert("CEP não encontrado.");
+          }
+        })
+        .catch(() => alert("Erro ao consultar o CEP."));
+    }
+  });
+
+  function buscarCepPorEndereco() {
+    const rua = document.getElementById("rua").value.trim();
+    const bairro = document.getElementById("bairro").value.trim();
+    const cidade = document.getElementById("cidade").value.trim();
+    const estado = document.getElementById("estado").value.trim().toUpperCase();
+
+    if(rua && bairro && cidade && estado.length===2){
+      fetch(`https://viacep.com.br/ws/${estado}/${cidade}/${bairro}/${rua}/json/`)
+        .then(response => response.json())
+        .then(data => {
+          if(Array.isArray(data) && data.length>0 && !data[0].erro){
+            document.getElementById("cep").value = data[0].cep || "";
+            atualizarTaxaEntrega();
+          }
+        })
+        .catch(() => {});
+    }
+  }
+
+  ["rua", "bairro", "cidade", "estado"].forEach(id => {
+    document.getElementById(id).addEventListener("blur", () => {
+      if(id==="estado"){
+        document.getElementById(id).value = document.getElementById(id).value.toUpperCase();
+      }
+      buscarCepPorEndereco();
+    });
+  });
+
+  const formaPagamentoEl = document.getElementById("formaPagamento");
+  const infoPixEl = document.getElementById("infoPix");
+  formaPagamentoEl.addEventListener("change", () => {
+    if(formaPagamentoEl.value === "pix") {
+      infoPixEl.style.display = "block";
+    } else {
+      infoPixEl.style.display = "none";
+    }
+  });
 
   document.getElementById("btnFinalizarPedido").addEventListener("click", () => {
     if(carrinho.length === 0){
@@ -761,15 +824,13 @@
       texto += "\n";
     });
 
-    // Obtem a taxa de entrega exibida na página
-    const taxaEntregaTexto = document.getElementById("taxaEntregaArea").textContent;
-    if(taxaEntregaTexto.includes("Taxa de entrega:")){
-      const valorTaxa = parseFloat(taxaEntregaTexto.match(/\d+\,?\d*/)[0].replace(",", "."));
+    const taxaTexto = document.getElementById("taxaEntregaArea").textContent;
+    if(taxaTexto.includes("Taxa de entrega:")){
+      const valorTaxa = parseFloat(taxaTexto.match(/\d+\,?\d*/)[0].replace(",", "."));
       texto += `Taxa de entrega: R$ ${valorTaxa.toFixed(2)}\n`;
     }
 
-    let totalTexto = document.getElementById("totalPedido").textContent;
-    texto += `TOTAL: ${totalTexto.replace("Total: ", "")}\n`;
+    texto += `TOTAL: ${document.getElementById("totalPedido").textContent.replace("Total: ", "")}\n`;
 
     if(formaPagamento === "pix"){
       texto += `\nChave PIX para pagamento: 67992149584\n`;
@@ -779,12 +840,10 @@
     window.open(urlWhats, "_blank");
   });
 
-  // Inicialização
   montarListaAdicionais();
   carregarSabores();
   atualizarTextoAdicionais();
 
-  // Tema toggle atualizado - texto do botão mostra o tema oposto
   const btnTema = document.getElementById("btnTema");
   function atualizarTextoBotaoTema() {
     const atual = document.body.getAttribute("data-tema");
@@ -802,7 +861,6 @@
     atualizarTextoBotaoTema();
   });
 
-  // Atualizar texto botão tema na inicialização
   const temaSalvo = localStorage.getItem("kv_tema");
   if(temaSalvo){
     document.body.setAttribute("data-tema", temaSalvo);
@@ -811,74 +869,9 @@
   }
   atualizarTextoBotaoTema();
 
-  // Preenchimento automático CEP -> endereço
-  const cepInput = document.getElementById("cep");
-  const ruaInput = document.getElementById("rua");
-  const bairroInput = document.getElementById("bairro");
-  const cidadeInput = document.getElementById("cidade");
-  const estadoInput = document.getElementById("estado");
-
-  cepInput.addEventListener("blur", () => {
-    const cep = cepInput.value.replace(/\D/g, "");
-    if (cep.length === 8) {
-      fetch(`https://viacep.com.br/ws/${cep}/json/`)
-        .then((response) => response.json())
-        .then((data) => {
-          if (!data.erro) {
-            ruaInput.value = data.logradouro || "";
-            bairroInput.value = data.bairro || "";
-            cidadeInput.value = data.localidade || "";
-            estadoInput.value = data.uf || "";
-            atualizarTaxaEntrega();
-          } else {
-            alert("CEP não encontrado.");
-          }
-        })
-        .catch(() => alert("Erro ao consultar o CEP."));
-    }
-  });
-
-  // Preenchimento automático endereço -> CEP
-  function buscarCepPorEndereco() {
-    const rua = ruaInput.value.trim();
-    const bairro = bairroInput.value.trim();
-    const cidade = cidadeInput.value.trim();
-    const estado = estadoInput.value.trim().toUpperCase();
-
-    if (rua && bairro && cidade && estado.length === 2) {
-      fetch(`https://viacep.com.br/ws/${estado}/${cidade}/${bairro}/${rua}/json/`)
-        .then(response => response.json())
-        .then(data => {
-          if (Array.isArray(data) && data.length > 0 && !data[0].erro) {
-            cepInput.value = data[0].cep || "";
-            atualizarTaxaEntrega();
-          }
-        })
-        .catch(() => {});
-    }
-  }
-
-  ruaInput.addEventListener("blur", buscarCepPorEndereco);
-  bairroInput.addEventListener("blur", buscarCepPorEndereco);
-  cidadeInput.addEventListener("blur", buscarCepPorEndereco);
-  estadoInput.addEventListener("blur", () => {
-    estadoInput.value = estadoInput.value.toUpperCase();
-    buscarCepPorEndereco();
-  });
-
-  // Mostrar/esconder chave PIX conforme seleção
-  const formaPagamentoEl = document.getElementById("formaPagamento");
-  const infoPixEl = document.getElementById("infoPix");
-  formaPagamentoEl.addEventListener("change", () => {
-    if(formaPagamentoEl.value === "pix") {
-      infoPixEl.style.display = "block";
-    } else {
-      infoPixEl.style.display = "none";
-    }
-  });
 </script>
 
-<!-- Biblioteca Google Maps com sua chave, lembre-se de trocar pela sua! -->
+<!-- Google Maps API Key aqui -->
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC8TWQMm5cRwx4LfHuUz2Rtuwt0ivKXMME&libraries=places" async defer></script>
 
 </body>
